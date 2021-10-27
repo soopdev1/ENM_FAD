@@ -44,7 +44,7 @@ public class Database {
         String user = "bando";
         String password = "bando";
 
-//////    NEET
+//    NEET
         String host = "clustermicrocredito.cluster-c6m6yfqeypv3.eu-south-1.rds.amazonaws.com:3306/enm_gestione_neet_prod";
         if (test) {
             host = "clustermicrocredito.cluster-c6m6yfqeypv3.eu-south-1.rds.amazonaws.com:3306/enm_gestione_neet";
@@ -55,6 +55,7 @@ public class Database {
 //        if (test) {
 //            host = "clustermicrocredito.cluster-c6m6yfqeypv3.eu-south-1.rds.amazonaws.com:3306/enm_gestione_dd";
 //        }
+        
         this.log = l;
         boolean mysql = true;
         if (mysql) {
@@ -210,10 +211,10 @@ public class Database {
     public GenericUser getUserMC(String username) {
         GenericUser out = null;
         try {
-            String sql = "SELECT username FROM user WHERE username = ? AND tipo = ?";
+            String sql = "SELECT username FROM user WHERE username = ? AND tipo IN (2,5)";
             PreparedStatement ps = this.c.prepareStatement(sql);
             ps.setString(1, username);
-            ps.setString(2, "2");
+//            ps.setString(2, "2");
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 out = new GenericUser(rs.getString(1), "ADMIN", "MC", rs.getString(1), "", null);
