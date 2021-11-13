@@ -5,7 +5,6 @@
  */
 package it.refill.servlet;
 
-import com.mysql.cj.util.Util;
 import it.refill.engine.Action;
 import static it.refill.engine.Action.getNanoSecond;
 import static it.refill.engine.Action.getRequestValue;
@@ -31,7 +30,7 @@ import static org.apache.commons.lang3.StringUtils.deleteWhitespace;
 public class Login extends HttpServlet {
 
     protected void logout_mcn(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        
+
         log_ajax("L2",
                 request.getSession().getAttribute("us_stanza").toString(),
                 request.getSession().getAttribute("us_role").toString() + ":"
@@ -118,10 +117,10 @@ public class Login extends HttpServlet {
             se.setAttribute("us_cf", user.getCodicefiscale().toUpperCase());
             se.setAttribute("us_stanza", nomestanza.toUpperCase());
             se.setAttribute("us_role", user.getTipo());
-            
+
             log_ajax("L1", nomestanza.toUpperCase(), user.getTipo() + ":" + user.getIdallievi(), getNanoSecond());
             log_ajax("L10", nomestanza.toUpperCase(), "LOGIN " + user.getIdallievi() + " CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
-            
+
             redirect(request, response, "conference_mcn.jsp");
         } else {
             //
@@ -133,9 +132,8 @@ public class Login extends HttpServlet {
 //            se.setAttribute("us_cf", "MCN");
 //            se.setAttribute("us_stanza", "FADMCN_82_A1");
 //            se.setAttribute("us_role", "ADMINMC");
-//            redirect(request, response, "conference_mcn.jsp");
 //            se.setAttribute("us_pro", "82");
-
+//            redirect(request, response, "conference_mcn.jsp");
             log_ajax("ER1", nomestanza.toUpperCase(), "LOGIN FALLITO CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
             redirect(request, response, "login_mcn.jsp?error=yes");
 
