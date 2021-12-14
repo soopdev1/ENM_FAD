@@ -111,8 +111,8 @@ public class Action {
     }
 
     public static String getDomainFAD() {
-        return "fad01.selfiemployment.net";
-//        return get_Path("linkfad_FL");
+//        return "fad01.selfiemployment.net";
+        return get_Path("linkfad_FL");
     }
 
     public static String formatStringtoStringDate(String dat, String pattern1, String pattern2) {
