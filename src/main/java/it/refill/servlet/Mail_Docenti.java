@@ -41,6 +41,12 @@ public class Mail_Docenti extends HttpServlet {
                     + "AND data ='" + dataoggi + "' "
                     + "AND room = '" + nomestanza + "'";
             Database db1 = new Database(log);
+
+            String linkweb = db1.get_Path("linkfad");
+            String linknohttpweb = remove(linkweb, "https://");
+            linknohttpweb = remove(linknohttpweb, "http://");
+            linknohttpweb = removeEnd(linknohttpweb, "/");
+            String sender = db1.get_Path("mailsender");
             try (Statement st4 = db1.getC().createStatement(); ResultSet rs4 = st4.executeQuery(sql4)) {
                 if (rs4.next()) {
 
@@ -69,12 +75,6 @@ public class Mail_Docenti extends HttpServlet {
                                         if (rs6.next()) {
                                             String emailtesto = rs6.getString(2);
                                             String emailoggetto = rs6.getString(1);
-
-                                            String linkweb = db1.get_Path("linkfad");
-                                            String linknohttpweb = remove(linkweb, "https://");
-                                            linknohttpweb = remove(linknohttpweb, "http://");
-                                            linknohttpweb = removeEnd(linknohttpweb, "/");
-
                                             emailtesto = StringUtils.replace(emailtesto, "@nomecognome", nomecognome);
                                             emailtesto = StringUtils.replace(emailtesto, "@username", user);
                                             emailtesto = StringUtils.replace(emailtesto, "@password", psw);
@@ -83,18 +83,14 @@ public class Mail_Docenti extends HttpServlet {
                                             emailtesto = StringUtils.replace(emailtesto, "@nomestanza", nomestanza);
                                             emailtesto = StringUtils.replace(emailtesto, "@linkweb", linkweb);
                                             emailtesto = StringUtils.replace(emailtesto, "@linknohttpweb", linknohttpweb);
-                                            es = sendMail(db1.get_Path("mailsender"), new String[]{emaildest}, new String[]{}, emailtesto, emailoggetto);
-//                                            sendMail(db1.get_Path("mailsender"), new String[]{"raffaele.cosco@faultless.it"}, emailtesto, emailoggetto);
-//                                            es = true;
+                                            es = sendMail(sender, new String[]{emaildest}, new String[]{}, emailtesto, emailoggetto);
                                         }
                                     }
 
                                 }
                             }
-
                         }
                     }
-
                 }
             }
             db1.closeDB();
@@ -131,15 +127,12 @@ public class Mail_Docenti extends HttpServlet {
                 GenericUser docente = lista_docenti.stream().filter(us -> us.getIdallievi().equals(id_docente)).findAny().get();
                 if (docente != null) {
                     String maildest = docente.getEmail();
-                    maildest = "raffaele.cosco@faultless.it";
-
                     if (!EmailValidator.getInstance().isValid(maildest)) {
                         out.print("MAIL NON VALIDA :" + docente.getEmail());
                         out.flush();
                         out.close();
                     } else {
                         boolean es = fadmail_DOCENTE(pr, id_docente, dataoggi, st, docente.getNome().toUpperCase() + " " + docente.getCognome().toUpperCase(), datainvito, docente.getEmail().toLowerCase());
-//                                Sms.sendSmsFAD(user.getNome(), user.getCognome(), user.getNumero());
                         if (es) {
                             out.print("success");
                         } else {
@@ -153,43 +146,6 @@ public class Mail_Docenti extends HttpServlet {
             }
 
         }
-
-//        PrintWriter out = response.getWriter();
-//        String id_docente = getRequestValue(request, "cf");
-//        String id_progetto = getRequestValue(request, "pr");
-//        String st = getRequestValue(request, "st");
-//
-//        List<GenericUser> lista_docenti = Action.get_DocProg(id_progetto);
-//        String nomeprogettoform = Action.get_nomeProg(id_progetto);
-//        String azioneform = Action.get_Path("linkfad");
-//        String datainvito = new DateTime().toString(pat_1);
-//
-//        if (lista_docenti.stream().anyMatch(us -> us.getIdallievi().equals(id_docente))) {
-//            GenericUser docente = lista_docenti.stream().filter(us -> us.getIdallievi().equals(id_docente)).findAny().get();
-//            if (docente != null) {
-//                String maildest = docente.getEmail();
-//                //maildest = "rcosco@setacom.it";
-//                if (!EmailValidator.getInstance().isValid(maildest)) {
-//                    out.print("MAIL NON VALIDA :" + docente.getEmail());
-//                    out.flush();
-//                    out.close();
-//                } else {
-//                    fadmail_docente(nomeprogettoform, datainvito, docente.getCognome() + " " + docente.getNome(), azioneform, docente.getCodicefiscale(), id_progetto, maildest, st);
-//                    System.out.println("MAIL DOCENTE A: " + maildest + " -- " + docente.getCognome() + " " + docente.getNome());
-//                    out.print("success");
-//                    out.flush();
-//                    out.close();
-//                }
-//            } else {
-//                out.print("MAIL NON TROVATA");
-//                out.flush();
-//                out.close();
-//            }
-//        } else {
-//            out.print("MAIL NON TROVATA");
-//            out.flush();
-//            out.close();
-//        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

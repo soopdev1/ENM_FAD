@@ -32,7 +32,7 @@
         <!-- Custom styles for this template-->
         <link href="css/sb-admin-2.min.css" rel="stylesheet">
         <script src="js/jquery-3.5.1.min.js"></script>
-        <script src='https://meet.jit.si/external_api.js'></script>
+        <script src="https://meet.jit.si/external_api.js"></script>
         <script src="https://meet.jit.si/libs/lib-jitsi-meet.min.js"></script>
         <link rel="shortcut icon" href="favicon.ico" />
     </head>
@@ -55,6 +55,7 @@
         }
 
         function start(roomname) {
+
             var name = "<%=us_nome%>" + " " + "<%=us_cognome%>";
             var domain = "<%=Action.getDomainFAD()%>";
             $('#content-jitsi').html("");
@@ -68,26 +69,36 @@
                 noSSL: false,
                 enableWelcomePage: false,
                 parentNode: document.getElementById('content-jitsi'),
+                userInfo: {
+                    email: 'email@jitsiexamplemail.com',
+                    displayName: name
+                },
                 configOverwrite: {
                     enableWelcomePage: false,
                     //raf 160721
                     enableForcedReload: false,
-                    enableIceRestart: true
+                    enableIceRestart: true,
+                    // raf 14122021
+                    startAudioMuted: 1000,
+                    startVideoMuted: 1000,
+                    startSilent: false,
+                    maxFullResolutionparticipants: -1,
+                    fileRecordingsEnabled: false,
+                    useNewBandwithAllocationStrategy: true,
+                    useTurnUdp: true,
+                    enableEncodedTransformSupport: true,
+                    defautlLocalDisplayName: 'Allievo non identificato',
+                    defaultRemoteDisplayName: 'Allievo non identificato',
+                    defaultLanguage: 'it',
+                    disableProfile: true
                 },
                 interfaceConfigOverwrite: {
                     TOOLBAR_BUTTONS: but1
                 }
             };
 
-            
-            
-            
-            
-
-
             var api = new JitsiMeetExternalAPI(domain, options);
-            api.executeCommand('displayName', name);
-
+            //api.executeCommand('displayName', name);
             api.addEventListener('avatarChanged', function (OUT) {
                 if (OUT.id === 'local') {
                     log_ajax('IN', '<%=us_stanza%>', "AVATAR MODIFICATO/INGRESSO -> " + '<%=us_cod%>');
@@ -299,7 +310,7 @@
                                 <%    //if (!us_role.equals("") && !us_role.equals("ALLIEVO")) {
                                     List<GenericUser> usr = Action.get_UserProgMAILOK(us_pro);
                                     List<GenericUser> doc = Action.get_DocProgMAILOK(us_pro);
-                                    if (!doc.isEmpty()) {
+                                    if (doc != null && !doc.isEmpty()) {
                                 %>
                                 <div class="form-group" >
                                     <h6 class="m-0 font-weight-bold text-primary">Seleziona Docente:</h6>

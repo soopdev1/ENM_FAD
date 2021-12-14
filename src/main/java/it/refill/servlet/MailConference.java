@@ -7,7 +7,6 @@ package it.refill.servlet;
 
 import it.refill.engine.Action;
 import static it.refill.engine.Action.getRequestValue;
-//import static it.refill.servlet.Mail.fadmail_conference;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;

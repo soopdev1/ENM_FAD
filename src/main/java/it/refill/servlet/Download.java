@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -40,23 +39,25 @@ public class Download extends HttpServlet {
 
         File downloadFile = new File(path);
         if (downloadFile.exists()) {
-            FileInputStream inStream = new FileInputStream(downloadFile);
-            String mimeType = Files.probeContentType(downloadFile.toPath());
-            if (mimeType == null) {
-                mimeType = "application/pdf";
+
+            try (FileInputStream inStream = new FileInputStream(downloadFile)) {
+                String mimeType = Files.probeContentType(downloadFile.toPath());
+                if (mimeType == null) {
+                    mimeType = "application/pdf";
+                }
+                response.setContentType(mimeType);
+                String headerKey = "Content-Disposition";
+                String headerValue = String.format("inline; filename=\"%s\"", downloadFile.getName());
+                response.setHeader(headerKey, headerValue);
+                try (OutputStream outStream = response.getOutputStream()) {
+                    byte[] buffer = new byte[4096 * 4096];
+                    int bytesRead;
+                    while ((bytesRead = inStream.read(buffer)) != -1) {
+                        outStream.write(buffer, 0, bytesRead);
+                    }
+                }
             }
-            response.setContentType(mimeType);
-            String headerKey = "Content-Disposition";
-            String headerValue = String.format("inline; filename=\"%s\"", downloadFile.getName());
-            response.setHeader(headerKey, headerValue);
-            OutputStream outStream = response.getOutputStream();
-            byte[] buffer = new byte[4096 * 4096];
-            int bytesRead = -1;
-            while ((bytesRead = inStream.read(buffer)) != -1) {
-                outStream.write(buffer, 0, bytesRead);
-            }
-            inStream.close();
-            outStream.close();
+
         } else {
             Action.redirect(request, response, "404.html");
         }

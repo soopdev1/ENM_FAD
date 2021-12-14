@@ -71,7 +71,7 @@ public class Login extends HttpServlet {
                     se.setAttribute("us_stanza", nomestanza.toUpperCase());
                     se.setAttribute("us_role", "SOGGETTO ATTUATORE");
                     log_ajax("L1", nomestanza.toUpperCase(), "SOGGETTO ATTUATORE: " + user.getIdallievi(), getNanoSecond());
-                    redirect(request, response, "conference_mcn.jsp");
+                    redirect(request, response, "conference_mcn_2022.jsp");
                 } else {
                     redirect(request, response, "logerr.jsp");
                 }
@@ -87,7 +87,7 @@ public class Login extends HttpServlet {
                     se.setAttribute("us_stanza", nomestanza.toUpperCase());
                     se.setAttribute("us_role", "ADMINMC");
                     log_ajax("L1", nomestanza.toUpperCase(), "ADMINMC: " + user.getIdallievi(), getNanoSecond());
-                    redirect(request, response, "conference_mcn.jsp");
+                    redirect(request, response, "conference_mcn_2022.jsp");
                 } else {
                     redirect(request, response, "logerr.jsp");
                 }
@@ -107,8 +107,7 @@ public class Login extends HttpServlet {
         String password = deleteWhitespace(getRequestValue(request, "password"));
         String passwordMD5 = DigestUtils.md5Hex(password);
         GenericUser user = Action.loginUser(nomestanza, username, passwordMD5);
-        boolean check_credentials = user != null;
-        if (check_credentials) {
+        if (user != null) {
             HttpSession se = request.getSession();
             se.setAttribute("us_cod", user.getIdallievi());
             se.setAttribute("us_pro", user.getIdpro());
@@ -117,11 +116,9 @@ public class Login extends HttpServlet {
             se.setAttribute("us_cf", user.getCodicefiscale().toUpperCase());
             se.setAttribute("us_stanza", nomestanza.toUpperCase());
             se.setAttribute("us_role", user.getTipo());
-
             log_ajax("L1", nomestanza.toUpperCase(), user.getTipo() + ":" + user.getIdallievi(), getNanoSecond());
             log_ajax("L10", nomestanza.toUpperCase(), "LOGIN " + user.getIdallievi() + " CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
-
-            redirect(request, response, "conference_mcn.jsp");
+            redirect(request, response, "conference_mcn_2022.jsp");
         } else {
             //
 //            System.out.println("it.refill.servlet.Login.login_mcnnuovo()");
@@ -130,10 +127,10 @@ public class Login extends HttpServlet {
 //            se.setAttribute("us_nome", capitalize("MCN"));
 //            se.setAttribute("us_cognome", capitalize("MCN"));
 //            se.setAttribute("us_cf", "MCN");
-//            se.setAttribute("us_stanza", "FADMCNDD_214_A1");
-//            se.setAttribute("us_role", "ADMINMC");
-//            se.setAttribute("us_pro", "214");
-//            redirect(request, response, "conference_mcn.jsp");
+//            se.setAttribute("us_stanza", "FADMCNDD_316_A1");
+//            se.setAttribute("us_role", "ALLIEVO");
+//            se.setAttribute("us_pro", "316");
+//            redirect(request, response, "conference_mcn_2022.jsp");
 
             log_ajax("ER1", nomestanza.toUpperCase(), "LOGIN FALLITO CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
             redirect(request, response, "login_mcn.jsp?error=yes");
