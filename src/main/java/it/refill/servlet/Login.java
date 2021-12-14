@@ -124,16 +124,17 @@ public class Login extends HttpServlet {
             redirect(request, response, "conference_mcn.jsp");
         } else {
             //
-
+//            System.out.println("it.refill.servlet.Login.login_mcnnuovo()");
 //            HttpSession se = request.getSession();
 //            se.setAttribute("us_cod", "MCN");
 //            se.setAttribute("us_nome", capitalize("MCN"));
 //            se.setAttribute("us_cognome", capitalize("MCN"));
 //            se.setAttribute("us_cf", "MCN");
-//            se.setAttribute("us_stanza", "FADMCN_82_A1");
+//            se.setAttribute("us_stanza", "FADMCNDD_214_A1");
 //            se.setAttribute("us_role", "ADMINMC");
-//            se.setAttribute("us_pro", "82");
+//            se.setAttribute("us_pro", "214");
 //            redirect(request, response, "conference_mcn.jsp");
+
             log_ajax("ER1", nomestanza.toUpperCase(), "LOGIN FALLITO CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
             redirect(request, response, "login_mcn.jsp?error=yes");
 
