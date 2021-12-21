@@ -44,7 +44,7 @@ public class Database {
         String user = "bando";
         String password = "bando";
 
-//    NEET
+        //    NEET
 //        String host = "clustermicrocredito.cluster-c6m6yfqeypv3.eu-south-1.rds.amazonaws.com:3306/enm_gestione_neet_prod";
 //        if (test) {
 //            host = "clustermicrocredito.cluster-c6m6yfqeypv3.eu-south-1.rds.amazonaws.com:3306/enm_gestione_neet";
@@ -332,7 +332,7 @@ public class Database {
                 }
             }
         } catch (SQLException ex) {
-            out=null;
+            out = null;
             insertTR("E", "System", estraiEccezione(ex));
         }
         return out;
