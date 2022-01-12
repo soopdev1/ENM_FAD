@@ -127,11 +127,11 @@ public class Mail extends HttpServlet {
                             + "AND data ='" + dataoggi + "'";
                     try (Statement st5 = db1.getC().createStatement();) {
                         if (st5.executeUpdate(upd) > 0) {
-
-                            String sql1 = "SELECT ud.fase,lm.giorno,lm.orario_start,lm.orario_end,lm.id_docente FROM lezioni_modelli lm, modelli_progetti mp, lezione_calendario lc, unita_didattiche ud"
+                            String sql1 = "SELECT ud.fase,lm.giorno,lm.orario_start,lm.orario_end,lm.id_docente "
+                                    + "FROM lezioni_modelli lm, modelli_progetti mp, lezione_calendario lc, unita_didattiche ud, fad_multi f"
                                     + " WHERE mp.id_modello=lm.id_modelli_progetto AND lc.id_lezionecalendario=lm.id_lezionecalendario AND ud.codice=lc.codice_ud"
-                                    + " AND mp.id_progettoformativo=" + idprogetti_formativi
-                                    + " AND lm.giorno = '" + dataoggi + "'";
+                                    + " AND f.idprogetti_formativi=mp.id_progettoformativo AND mp.id_progettoformativo=" + idprogetti_formativi
+                                    + " AND f.nomestanza = '" + nomestanza + "' AND lm.giorno = '" + dataoggi + "'";
                             try (Statement st1 = db1.getC().createStatement(); ResultSet rs1 = st1.executeQuery(sql1)) {
                                 if (rs1.next()) {
                                     String orainvito = rs1.getString("lm.orario_start") + " - " + rs1.getString("lm.orario_end");
