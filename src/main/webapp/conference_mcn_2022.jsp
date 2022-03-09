@@ -451,6 +451,15 @@
                             </div>
                             <%}%>
                             <%
+                                String edu = Action.get_Path("linkedu");
+                                if (edu != null && (us_role.equals("ALLIEVO") || us_role.equals("DOCENTE"))) {%>
+                            <div class="col-xl-12 col-lg-12">
+                                <hr>
+                                <a href="<%=edu%>" class="btn btn-primary btn-lg btn-block" target="_blank">Vai su EDUBIK.it</a>
+                            </div>
+                            <%}%>
+
+                            <%
                                 List<DatiLezione> datilezione = Action.datilezione(date2, us_pro);
                                 if (datilezione.size() > 0) {
 

@@ -13,6 +13,9 @@ import static it.refill.engine.Action.getUserSA;
 import static it.refill.engine.Action.log_ajax;
 import static it.refill.engine.Action.redirect;
 import it.refill.engine.GenericUser;
+import static it.refill.sso.ClientSSO.login;
+import static it.refill.sso.ClientSSO.logout;
+import it.refill.sso.ResponseSSO;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -44,6 +47,13 @@ public class Login extends HttpServlet {
         request.getSession().setAttribute("us_cf", null);
         request.getSession().setAttribute("us_stanza", null);
         request.getSession().setAttribute("us_role", null);
+
+        //SSO
+        logout(request.getSession().getAttribute("us_sso").toString());
+        request.getSession().setAttribute("us_sso", null);
+        request.getSession().setAttribute("us_actk", null);
+        request.getSession().setAttribute("us_retk", null);
+
         request.getSession().invalidate();
         request.getSession().setMaxInactiveInterval(1);
         redirect(request, response, "login_mcn.jsp");
@@ -108,17 +118,33 @@ public class Login extends HttpServlet {
         String passwordMD5 = DigestUtils.md5Hex(password);
         GenericUser user = Action.loginUser(nomestanza, username, passwordMD5);
         if (user != null) {
-            HttpSession se = request.getSession();
-            se.setAttribute("us_cod", user.getIdallievi());
-            se.setAttribute("us_pro", user.getIdpro());
-            se.setAttribute("us_nome", capitalize(user.getNome().toLowerCase()));
-            se.setAttribute("us_cognome", capitalize(user.getCognome().toLowerCase()));
-            se.setAttribute("us_cf", user.getCodicefiscale().toUpperCase());
-            se.setAttribute("us_stanza", nomestanza.toUpperCase());
-            se.setAttribute("us_role", user.getTipo());
-            log_ajax("L1", nomestanza.toUpperCase(), user.getTipo() + ":" + user.getIdallievi(), getNanoSecond());
-            log_ajax("L10", nomestanza.toUpperCase(), "LOGIN " + user.getIdallievi() + " CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
-            redirect(request, response, "conference_mcn_2022.jsp");
+
+            ResponseSSO sso = login(username, password);
+            if (!sso.getAccess_token().startsWith("ERROR")) {
+                HttpSession se = request.getSession();
+                se.setAttribute("us_cod", user.getIdallievi());
+                se.setAttribute("us_pro", user.getIdpro());
+                se.setAttribute("us_nome", capitalize(user.getNome().toLowerCase()));
+                se.setAttribute("us_cognome", capitalize(user.getCognome().toLowerCase()));
+                se.setAttribute("us_cf", user.getCodicefiscale().toUpperCase());
+                se.setAttribute("us_stanza", nomestanza.toUpperCase());
+                se.setAttribute("us_role", user.getTipo());
+
+                //SSO
+                se.setAttribute("us_sso", username);
+                se.setAttribute("us_actk", sso.getAccess_token());
+                se.setAttribute("us_retk", sso.getRefresh_token());
+
+                log_ajax("L1", nomestanza.toUpperCase(), user.getTipo() + ":" + user.getIdallievi(), getNanoSecond());
+                log_ajax("L10", nomestanza.toUpperCase(), "LOGIN " + user.getIdallievi() + " CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
+                redirect(request, response, "conference_mcn_2022.jsp");
+            } else {
+
+                log_ajax("ER1", nomestanza.toUpperCase(), "LOGIN FALLITO SSO CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
+                log_ajax("ER1", nomestanza.toUpperCase(), "LOGIN FALLITO SSO: " + sso.toString(), getNanoSecond());
+
+                redirect(request, response, "login_mcn.jsp?error=yes");
+            }
         } else {
             //
 //            System.out.println("it.refill.servlet.Login.login_mcnnuovo()");
@@ -130,11 +156,16 @@ public class Login extends HttpServlet {
 //            se.setAttribute("us_stanza", "FADMCNDD_316_A1");
 //            se.setAttribute("us_role", "ALLIEVO");
 //            se.setAttribute("us_pro", "316");
+//
+//            //SSO
+//            se.setAttribute("us_sso", username);
+//            se.setAttribute("us_actk","dadsdasaddas");
+//            se.setAttribute("us_retk", "dsaadsadsdsa");
+//
 //            redirect(request, response, "conference_mcn_2022.jsp");
 
             log_ajax("ER1", nomestanza.toUpperCase(), "LOGIN FALLITO CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
             redirect(request, response, "login_mcn.jsp?error=yes");
-
         }
 
     }

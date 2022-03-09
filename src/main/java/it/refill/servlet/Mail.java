@@ -6,9 +6,11 @@
 package it.refill.servlet;
 
 import it.refill.engine.Action;
+import static it.refill.engine.Action.estraiEccezione;
 import static it.refill.engine.Action.getRequestValue;
 import static it.refill.engine.Action.log;
 import it.refill.engine.Database;
+import it.refill.sso.DbSSO;
 import it.refill.engine.GenericUser;
 import static it.refill.engine.SendMailJet.sendMail;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.List;
+import java.util.logging.Level;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -107,6 +110,7 @@ public class Mail extends HttpServlet {
                     + "AND idsoggetto = " + idsoggetto + " "
                     + "AND data ='" + dataoggi + "' "
                     + "AND room = '" + nomestanza + "'";
+            DbSSO dbs = new DbSSO();
             Database db1 = new Database(log);
             String linkweb = db1.get_Path("linkfad");
             String linknohttpweb = remove(linkweb, "https://");
@@ -127,6 +131,8 @@ public class Mail extends HttpServlet {
                             + "AND data ='" + dataoggi + "'";
                     try (Statement st5 = db1.getC().createStatement();) {
                         if (st5.executeUpdate(upd) > 0) {
+                            
+                            log.log(Level.INFO, "SSO ALLIEVO ) {0} : {1}", new Object[]{nomecognome, dbs.executequery(upd)});
                             String sql1 = "SELECT ud.fase,lm.giorno,lm.orario_start,lm.orario_end,lm.id_docente "
                                     + "FROM lezioni_modelli lm, modelli_progetti mp, lezione_calendario lc, unita_didattiche ud, fad_multi f"
                                     + " WHERE mp.id_modello=lm.id_modelli_progetto AND lc.id_lezionecalendario=lm.id_lezionecalendario AND ud.codice=lc.codice_ud"
@@ -163,9 +169,9 @@ public class Mail extends HttpServlet {
                 }
             }
             db1.closeDB();
+            dbs.closeDB();
         } catch (Exception e) {
-            log.severe(e.getMessage());
-            e.printStackTrace();
+            log.severe(estraiEccezione(e));
         }
         return es;
     }

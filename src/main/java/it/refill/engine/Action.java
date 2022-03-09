@@ -137,11 +137,11 @@ public class Action {
 
     public static void redirect(HttpServletRequest request, HttpServletResponse response, String destination) throws ServletException, IOException {
 
-        String domain = StringUtils.replace(Action.get_Path("linkfad"), "Login", "");
-//        String domain = "";
-        if (test) {
-            domain = "";
-        }
+//        String domain = StringUtils.replace(Action.get_Path("linkfad"), "Login", "");
+        String domain = "";
+//        if (test) {
+//            domain = "";
+//        }
 
         if (response.isCommitted()) {
             RequestDispatcher dispatcher = request.getRequestDispatcher(domain + destination);
