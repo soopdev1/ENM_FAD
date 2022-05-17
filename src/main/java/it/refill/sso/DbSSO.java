@@ -4,6 +4,7 @@
  */
 package it.refill.sso;
 
+import static it.refill.engine.Action.conf;
 import static it.refill.engine.Action.estraiEccezione;
 import static it.refill.engine.Action.log;
 import java.sql.Connection;
@@ -23,9 +24,9 @@ public class DbSSO {
     public DbSSO() {
 
         String driver = "com.mysql.cj.jdbc.Driver";
-        String user = "identity";
-        String password = "Idsrv22!!";
-
+        String user = conf.getString("db.user.identity");
+        String password = conf.getString("db.pass.identity");
+        String host = conf.getString("db.host") + ":3306/enm_identity";
         try {
             Class.forName(driver).newInstance();
             Properties p = new Properties();
@@ -36,7 +37,7 @@ public class DbSSO {
             p.put("useSSL", "false");
             p.put("connectTimeout", "1000");
             p.put("useUnicode", "true");
-            this.c = DriverManager.getConnection("jdbc:mysql://clustermicrocredito.cluster-c6m6yfqeypv3.eu-south-1.rds.amazonaws.com:3306/enm_identity", p);
+            this.c = DriverManager.getConnection(host, p);
         } catch (Exception ex) {
             ex.printStackTrace();
             if (this.c != null) {
@@ -66,7 +67,7 @@ public class DbSSO {
 
     public boolean executequery(String qu1) {
         try {
-            try (Statement st1 = this.c.createStatement()) {
+            try ( Statement st1 = this.c.createStatement()) {
                 st1.executeUpdate(qu1);
                 return true;
             }

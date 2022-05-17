@@ -5,8 +5,14 @@
 package it.refill.sso;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.refill.engine.Action;
 import static it.refill.engine.Action.estraiEccezione;
 import static it.refill.engine.Action.log;
+import java.nio.charset.Charset;
+import java.security.KeyFactory;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import javax.crypto.Cipher;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -15,6 +21,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  *
@@ -126,5 +133,30 @@ public class ClientSSO {
             output = new ResponseSSO("ERROR CODE: 500", "ERROR MESSAGE: " + ex.getMessage());
         }
         return output;
+    }
+    
+    
+    
+    public static String encrypt(String plaintext) {
+        try {
+            String key = new String(Base64.decodeBase64(Action.get_Path("puk_cer")), Charset.defaultCharset());
+            String publicKeyPEM = key
+                    .replace("-----BEGIN PUBLIC KEY-----", "")
+                    .replaceAll(System.lineSeparator(), "")
+                    .replace("-----END PUBLIC KEY-----", "");
+            byte[] encoded = Base64.decodeBase64(publicKeyPEM);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+            RSAPublicKey key1 = (RSAPublicKey) keyFactory.generatePublic(keySpec);
+            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, key1);
+            return Base64.encodeBase64String(
+                    cipher.doFinal(plaintext.getBytes("UTF8"))
+            );
+//            return new String(cipher.doFinal(plaintext.getBytes("UTF8")), "UTF8");
+        } catch (Exception ex) {
+            log.severe(estraiEccezione(ex));
+            return null;
+        }
     }
 }

@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -30,7 +31,6 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -58,6 +58,9 @@ public class Action {
     public static final String pat_9 = "yyMMddHHmmssSSS";
 
     public static final boolean test = false;
+
+    public static final ResourceBundle conf = ResourceBundle.getBundle("conf.conf");
+    public static final boolean SSOACTIVE = Boolean.valueOf(conf.getString("sso"));
 
     private static Logger createLog(String appname) {
         Logger logger = Logger.getLogger(appname);
@@ -561,7 +564,6 @@ public class Action {
         return uri;
     }
 
-
     public static int parseINT(String ing) {
         try {
             return Integer.parseInt(ing);
@@ -612,7 +614,17 @@ public class Action {
         } catch (Exception e) {
             return null;
         }
+    }
 
+    public static GenericUser loginUser(String username, String pass) {
+        try {
+            Database db = new Database(log);
+            GenericUser out = db.loginUser(username, pass);
+            db.closeDB();
+            return out;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static GenericUser datilezione(String nomestanza, String username, String pass) {
@@ -648,7 +660,7 @@ public class Action {
         }
         return out;
     }
-    
+
     public static String estraiEccezione(Exception ec1) {
         try {
             String stack_nam = ec1.getStackTrace()[0].getMethodName();
@@ -659,5 +671,5 @@ public class Action {
         return ec1.getMessage();
 
     }
-    
+
 }

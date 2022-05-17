@@ -6,9 +6,9 @@
 package it.refill.engine;
 
 import com.google.gson.Gson;
+import static it.refill.engine.Action.conf;
 import static it.refill.engine.Action.estraiEccezione;
 import static it.refill.engine.Action.pat_5;
-import static it.refill.engine.Action.test;
 import static java.lang.Class.forName;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -39,48 +39,30 @@ public class Database {
 //    public Logger log;
 
     public Database(Logger l) {
-
         String driver = "com.mysql.cj.jdbc.Driver";
-        String user = "bando";
-        String password = "bando";
-
-        //    NEET
-        String host = "clustermicrocredito.cluster-c6m6yfqeypv3.eu-south-1.rds.amazonaws.com:3306/enm_gestione_neet_prod";
-//////////        if (test) {
-//////////            host = "clustermicrocredito.cluster-c6m6yfqeypv3.eu-south-1.rds.amazonaws.com:3306/enm_gestione_neet";
-//////////        }
-//        //DED
-//        String host = "clustermicrocredito.cluster-c6m6yfqeypv3.eu-south-1.rds.amazonaws.com:3306/enm_gestione_dd_prod";
-//////        if (test) {
-//////            host = "clustermicrocredito.cluster-c6m6yfqeypv3.eu-south-1.rds.amazonaws.com:3306/enm_gestione_dd";
-//////        }
-
-        boolean mysql = true;
-        if (mysql) {
-            try {
-                forName(driver).newInstance();
-                Properties p = new Properties();
-                p.put("user", user);
-                p.put("password", password);
-                p.put("characterEncoding", "UTF-8");
-                p.put("passwordCharacterEncoding", "UTF-8");
-                p.put("useSSL", "false");
-                p.put("connectTimeout", "1000");
-                p.put("useUnicode", "true");
-
-                this.c = DriverManager.getConnection("jdbc:mysql://" + host, p);
-//                boolean ok = connesso(this.c);
-//                System.out.println("HOST: " + host + " - CONNESSO " + ok + " - ISDBTEST: " + test);
-            } catch (Exception ex) {
-                System.err.println(estraiEccezione(ex));
-                if (this.c != null) {
-                    try {
-                        this.c.close();
-                    } catch (SQLException ex1) {
-                    }
+        String user = conf.getString("db.user");
+        String password = conf.getString("db.pass");
+        String host = conf.getString("db.host") + ":3306/" + conf.getString("db.name");
+        try {
+            forName(driver).newInstance();
+            Properties p = new Properties();
+            p.put("user", user);
+            p.put("password", password);
+            p.put("characterEncoding", "UTF-8");
+            p.put("passwordCharacterEncoding", "UTF-8");
+            p.put("useSSL", "false");
+            p.put("connectTimeout", "1000");
+            p.put("useUnicode", "true");
+            this.c = DriverManager.getConnection("jdbc:mysql://" + host, p);
+        } catch (Exception ex) {
+            System.err.println(estraiEccezione(ex));
+            if (this.c != null) {
+                try {
+                    this.c.close();
+                } catch (SQLException ex1) {
                 }
-                this.c = null;
             }
+            this.c = null;
         }
     }
 
@@ -138,7 +120,7 @@ public class Database {
         List<String> out = new ArrayList<>();
         try {
             String sql = "SELECT DISTINCT(codicefiscale) FROM " + table;
-            try (PreparedStatement ps = this.c.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            try ( PreparedStatement ps = this.c.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     out.add(rs.getString(1));
                 }
@@ -153,9 +135,9 @@ public class Database {
         GenericUser out = null;
         try {
             String sql = "SELECT iddocenti, nome, cognome, codicefiscale FROM docenti WHERE codicefiscale = ?";
-            try (PreparedStatement ps = this.c.prepareStatement(sql)) {
+            try ( PreparedStatement ps = this.c.prepareStatement(sql)) {
                 ps.setString(1, cf);
-                try (ResultSet rs = ps.executeQuery()) {
+                try ( ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         out = new GenericUser(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), "NONE", null);
                     }
@@ -171,16 +153,16 @@ public class Database {
         GenericUser out = null;
         try {
             String sql = "SELECT username,idsoggetti_attuatori FROM user WHERE username = ? AND tipo = ?";
-            try (PreparedStatement ps = this.c.prepareStatement(sql)) {
+            try ( PreparedStatement ps = this.c.prepareStatement(sql)) {
                 ps.setString(1, username);
                 ps.setString(2, "1");
-                try (ResultSet rs = ps.executeQuery()) {
+                try ( ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         int idsa = rs.getInt(2);
                         String sql1 = "SELECT ragionesociale FROM soggetti_attuatori WHERE idsoggetti_attuatori = ?";
-                        try (PreparedStatement ps1 = this.c.prepareStatement(sql1)) {
+                        try ( PreparedStatement ps1 = this.c.prepareStatement(sql1)) {
                             ps1.setInt(1, idsa);
-                            try (ResultSet rs1 = ps1.executeQuery()) {
+                            try ( ResultSet rs1 = ps1.executeQuery()) {
                                 if (rs1.next()) {
                                     out = new GenericUser(rs.getString(1), rs1.getString(1), "", rs.getString(1), "", null);
                                 }
@@ -199,9 +181,9 @@ public class Database {
         GenericUser out = null;
         try {
             String sql = "SELECT username FROM user WHERE username = ? AND tipo IN (2,5)";
-            try (PreparedStatement ps = this.c.prepareStatement(sql)) {
+            try ( PreparedStatement ps = this.c.prepareStatement(sql)) {
                 ps.setString(1, username);
-                try (ResultSet rs = ps.executeQuery()) {
+                try ( ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         out = new GenericUser(rs.getString(1), "ADMIN", "MC", rs.getString(1), "", null);
                     }
@@ -217,9 +199,9 @@ public class Database {
         GenericUser out = null;
         try {
             String sql = "SELECT username FROM user WHERE iduser = ?";
-            try (PreparedStatement ps = this.c.prepareStatement(sql)) {
+            try ( PreparedStatement ps = this.c.prepareStatement(sql)) {
                 ps.setInt(1, id);
-                try (ResultSet rs = ps.executeQuery()) {
+                try ( ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         out = new GenericUser(rs.getString(1), "ADMIN", "US", rs.getString(1), "", null);
                     }
@@ -235,9 +217,9 @@ public class Database {
         GenericUser out = null;
         try {
             String sql = "SELECT username FROM user WHERE email = ?";
-            try (PreparedStatement ps = this.c.prepareStatement(sql)) {
+            try ( PreparedStatement ps = this.c.prepareStatement(sql)) {
                 ps.setString(1, mail);
-                try (ResultSet rs = ps.executeQuery()) {
+                try ( ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         out = new GenericUser(rs.getString(1), "ADMIN", "US", rs.getString(1), "", null);
                     }
@@ -253,9 +235,9 @@ public class Database {
         GenericUser out = null;
         try {
             String sql = "SELECT idallievi, nome, cognome, codicefiscale, email , telefono FROM allievi WHERE codicefiscale = ?";
-            try (PreparedStatement ps = this.c.prepareStatement(sql)) {
+            try ( PreparedStatement ps = this.c.prepareStatement(sql)) {
                 ps.setString(1, cf);
-                try (ResultSet rs = ps.executeQuery()) {
+                try ( ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         out = new GenericUser(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6));
                     }
@@ -270,7 +252,7 @@ public class Database {
     public String getNanoSecond() {
         try {
             String sql = "select current_timestamp(6)";
-            try (Statement st = this.c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 if (rs.next()) {
                     return rs.getString(1);
                 }
@@ -291,7 +273,7 @@ public class Database {
             }
 
             sql += " ORDER BY cognome,nome";
-            try (Statement st = this.c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 while (rs.next()) {
                     list.add(new GenericUser(rs.getString(1), rs.getString(4), rs.getString(5),
                             rs.getString(6), rs.getString(8), rs.getString("telefono")));
@@ -311,7 +293,7 @@ public class Database {
                 sql += " AND email REGEXP '^[^@]+@[^@]+\\.[^@]{2,}$'";
             }
             sql += " ORDER BY cognome,nome";
-            try (Statement st = this.c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 while (rs.next()) {
                     list.add(new GenericUser(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString("email"), null));
                 }
@@ -326,7 +308,7 @@ public class Database {
         String out = "";
         try {
             String sql = "SELECT descrizione FROM progetti_formativi a WHERE idprogetti_formativi = '" + idpr + "'";
-            try (Statement st = this.c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 if (rs.next()) {
                     out = rs.getString(1);
                 }
@@ -349,7 +331,7 @@ public class Database {
                         + "' AND password = '" + psw + "'";
             }
 
-            try (Statement st = this.c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 if (rs.next()) {
                     out = rs.getString(1);
                 }
@@ -372,7 +354,7 @@ public class Database {
                         + "' AND password = '" + psw + "'";
             }
 
-            try (Statement st = this.c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 if (rs.next()) {
                     out = "CAD_" + rs.getString(1);
                 }
@@ -390,8 +372,7 @@ public class Database {
             String sql = "SELECT room,idprogetti_formativi FROM fad_access "
                     + "WHERE room  = '" + nomestanza + "' AND data=CURDATE() "
                     + "AND idprogetti_formativi = " + pr + "";
-            try (Statement st = this.c.createStatement();
-                    ResultSet rs = st.executeQuery(sql)) {
+            try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 ok = rs.next();
             }
         } catch (SQLException ex) {
@@ -405,7 +386,7 @@ public class Database {
         boolean ok = false;
         try {
             String sql = "SELECT nomestanza FROM fad_multi a WHERE stato='0' AND idprogetti_formativi = '" + pr + "' AND nomestanza = '" + nomestanza + "'";
-            try (Statement st = this.c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 ok = rs.next();
             }
         } catch (SQLException ex) {
@@ -419,7 +400,7 @@ public class Database {
         String out = null;
         try {
             String sql = "SELECT nomestanza FROM fad a WHERE stato='0' AND idprogetti_formativi = '" + idpr + "'";
-            try (Statement st = this.c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 if (rs.next()) {
                     out = rs.getString(1);
                 }
@@ -434,7 +415,7 @@ public class Database {
     public void log_ajax(String type, String room, String action, String date) {
         try {
             String sql = "INSERT INTO fad_track (type,room,action,date) VALUES (?,?,?,?)";
-            try (PreparedStatement pst = this.c.prepareStatement(sql)) {
+            try ( PreparedStatement pst = this.c.prepareStatement(sql)) {
                 pst.setString(1, type);
                 pst.setString(2, room);
                 pst.setString(3, action);
@@ -450,7 +431,7 @@ public class Database {
         String out = null;
         try {
             String sql = "SELECT url FROM path WHERE id='" + id + "'";
-            try (Statement st = this.c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 if (rs.next()) {
                     out = rs.getString(1);
                 }
@@ -466,7 +447,7 @@ public class Database {
         String[] out = {"", ""};
         try {
             String sql = "SELECT oggetto,testo FROM email WHERE chiave='" + id + "'";
-            try (Statement st = this.c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 if (rs.next()) {
                     out[0] = rs.getString(1);
                     out[1] = rs.getString(2);
@@ -483,7 +464,7 @@ public class Database {
         List<String> out = new ArrayList<>();
         try {
             String sql = "SELECT partecipanti FROM fad_micro WHERE idfad = " + nomestanza;
-            try (Statement st = this.c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 if (rs.next()) {
                     out = Arrays.asList(new Gson().fromJson(rs.getString(1), String[].class));
                 }
@@ -499,7 +480,7 @@ public class Database {
         String out = null;
         try {
             String sql = "SELECT password FROM fad_micro WHERE idfad= " + nomestanza;
-            try (Statement st = this.c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 if (rs.next()) {
                     out = rs.getString(1);
                 }
@@ -515,7 +496,7 @@ public class Database {
         Fadroom out = null;
         try {
             String sql = "SELECT * FROM fad_micro WHERE idfad=" + id;
-            try (Statement st = this.c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 if (rs.next()) {
                     out = new Fadroom(
                             rs.getInt("idfad"),
@@ -535,15 +516,14 @@ public class Database {
         return out;
     }
 
-    public GenericUser loginUser(String nomestanza, String username, String password) {
+    public GenericUser loginUser(String username, String password) {
         GenericUser out = null;
         try {
-            String sql = "SELECT type,idsoggetto,idprogetti_formativi FROM fad_access WHERE room = ? AND user = ? AND psw = ? AND data = curdate()";
-            try (PreparedStatement ps1 = this.c.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);) {
-                ps1.setString(1, nomestanza);
-                ps1.setString(2, username);
-                ps1.setString(3, password);
-                try (ResultSet rs1 = ps1.executeQuery()) {
+            String sql = "SELECT type,idsoggetto,idprogetti_formativi FROM fad_access WHERE user = ? AND psw = ?";
+            try ( PreparedStatement ps1 = this.c.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);) {
+                ps1.setString(1, username);
+                ps1.setString(2, password);
+                try ( ResultSet rs1 = ps1.executeQuery()) {
                     if (rs1.next()) {
                         String idtype = rs1.getString(1);
                         int idsoggetto = rs1.getInt(2);
@@ -560,7 +540,59 @@ public class Database {
                         } else {
                             return null;
                         }
-                        try (PreparedStatement ps2 = this.c.prepareStatement(sql1, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE); ResultSet rs2 = ps2.executeQuery()) {
+                        try ( PreparedStatement ps2 = this.c.prepareStatement(sql1, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);  ResultSet rs2 = ps2.executeQuery()) {
+                            if (rs2.next()) {
+                                if (idtype.equals("S")) {
+                                    out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), rs2.getString(6));
+                                    out.setTipo(GenericUser.formatType(idtype));
+                                    out.setIdpro(idprogetti_formativi);
+                                } else if (idtype.equals("D")) {
+                                    out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), null);
+                                    out.setTipo(GenericUser.formatType(idtype));
+                                    out.setIdpro(idprogetti_formativi);
+                                } else if (idtype.equals("O")) {
+                                    out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), rs2.getString(4));
+                                    out.setTipo(GenericUser.formatType(idtype));
+                                    out.setIdpro(idprogetti_formativi);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            out = null;
+            insertTR("E", "System", estraiEccezione(ex));
+        }
+        return out;
+    }
+
+    public GenericUser loginUser(String nomestanza, String username, String password) {
+        GenericUser out = null;
+        try {
+            String sql = "SELECT type,idsoggetto,idprogetti_formativi FROM fad_access WHERE room = ? AND user = ? AND psw = ? AND data = curdate()";
+            try ( PreparedStatement ps1 = this.c.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);) {
+                ps1.setString(1, nomestanza);
+                ps1.setString(2, username);
+                ps1.setString(3, password);
+                try ( ResultSet rs1 = ps1.executeQuery()) {
+                    if (rs1.next()) {
+                        String idtype = rs1.getString(1);
+                        int idsoggetto = rs1.getInt(2);
+                        String idprogetti_formativi = rs1.getString(3);
+
+                        String sql1;
+                        if (idtype.equals("S")) {
+                            sql1 = "SELECT idallievi, nome, cognome, codicefiscale, email, telefono FROM allievi WHERE idallievi = " + idsoggetto;
+                        } else if (idtype.equals("D")) {
+                            sql1 = "SELECT iddocenti, nome, cognome, codicefiscale, email FROM docenti WHERE iddocenti = " + idsoggetto;
+                        } else if (idtype.equals("O")) {
+                            sql1 = "SELECT id_staff, nome, cognome, telefono, email FROM staff_modelli "
+                                    + "WHERE id_staff = " + idsoggetto;
+                        } else {
+                            return null;
+                        }
+                        try ( PreparedStatement ps2 = this.c.prepareStatement(sql1, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);  ResultSet rs2 = ps2.executeQuery()) {
                             if (rs2.next()) {
                                 if (idtype.equals("S")) {
                                     out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), rs2.getString(6));
@@ -591,14 +623,14 @@ public class Database {
         GenericUser out = null;
         try {
             String sql = "SELECT type FROM fad_access WHERE idprogetti_formativi = ? AND idsoggetto = ? AND data = ? AND type = ? AND user = ? AND psw = ?";
-            try (PreparedStatement ps1 = this.c.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);) {
+            try ( PreparedStatement ps1 = this.c.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);) {
                 ps1.setInt(1, Integer.parseInt(idpro));
                 ps1.setInt(2, Integer.parseInt(iduser));
                 ps1.setString(3, data);
                 ps1.setString(4, idtype);
                 ps1.setString(5, username);
                 ps1.setString(6, pass);
-                try (ResultSet rs1 = ps1.executeQuery()) {
+                try ( ResultSet rs1 = ps1.executeQuery()) {
                     if (rs1.next()) {
                         String sql1;
                         if (idtype.equals("S")) {
@@ -608,7 +640,7 @@ public class Database {
                         } else {
                             return null;
                         }
-                        try (PreparedStatement ps2 = this.c.prepareStatement(sql1, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE); ResultSet rs2 = ps2.executeQuery()) {
+                        try ( PreparedStatement ps2 = this.c.prepareStatement(sql1, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);  ResultSet rs2 = ps2.executeQuery()) {
                             if (rs2.next()) {
                                 if (idtype.equals("S")) {
                                     out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), rs2.getString(6));
@@ -632,12 +664,12 @@ public class Database {
         String out = null;
         try {
             String sql = "SELECT room FROM fad_access WHERE idprogetti_formativi = ? AND idsoggetto = ? AND data = ? AND type = ?";
-            try (PreparedStatement ps1 = this.c.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);) {
+            try ( PreparedStatement ps1 = this.c.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);) {
                 ps1.setInt(1, Integer.parseInt(idpro));
                 ps1.setInt(2, Integer.parseInt(iduser));
                 ps1.setString(3, data);
                 ps1.setString(4, idtype);
-                try (ResultSet rs1 = ps1.executeQuery()) {
+                try ( ResultSet rs1 = ps1.executeQuery()) {
                     if (rs1.next()) {
                         out = rs1.getString(1);
                     }
@@ -662,7 +694,7 @@ public class Database {
                 return out;
             }
 
-            try (PreparedStatement ps1 = this.c.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE); ResultSet rs1 = ps1.executeQuery();) {
+            try ( PreparedStatement ps1 = this.c.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);  ResultSet rs1 = ps1.executeQuery();) {
                 if (rs1.next()) {
                     out = rs1.getString(1).toUpperCase() + " " + rs1.getString(2).toUpperCase();
                 }
@@ -679,7 +711,7 @@ public class Database {
         LinkedList<DocumentiLezione> out = new LinkedList<>();
         try {
             String sql2 = "SELECT * FROM documenti_unitadidattiche WHERE deleted = 0";
-            try (PreparedStatement ps2 = this.c.prepareStatement(sql2, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE); ResultSet rs2 = ps2.executeQuery();) {
+            try ( PreparedStatement ps2 = this.c.prepareStatement(sql2, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);  ResultSet rs2 = ps2.executeQuery();) {
                 while (rs2.next()) {
                     out.add(new DocumentiLezione(rs2.getInt("id_docud"), rs2.getString("tipo"), rs2.getString("path"), rs2.getString("codice_ud")));
                 }
@@ -707,7 +739,7 @@ public class Database {
                     + " WHERE lm.giorno = '" + datasql + "' AND mp.id_progettoformativo=" + idprogetto
                     + " AND lm.id_modelli_progetto=mp.id_modello AND lc.id_lezionecalendario=lm.id_lezionecalendario AND lc.codice_ud = ud.codice";
 
-            try (PreparedStatement ps1 = this.c.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE); ResultSet rs1 = ps1.executeQuery();) {
+            try ( PreparedStatement ps1 = this.c.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);  ResultSet rs1 = ps1.executeQuery();) {
                 while (rs1.next()) {
                     DatiLezione out = new DatiLezione(
                             rs1.getString("NUMEROLEZIONE"),
@@ -721,7 +753,7 @@ public class Database {
                             rs1.getString("FASE"));
 
                     String sql2 = "SELECT * FROM documenti_unitadidattiche WHERE codice_ud = '" + rs1.getString("UNITADIDATTICA") + "' AND deleted = 0";
-                    try (PreparedStatement ps2 = this.c.prepareStatement(sql2, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE); ResultSet rs2 = ps2.executeQuery();) {
+                    try ( PreparedStatement ps2 = this.c.prepareStatement(sql2, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);  ResultSet rs2 = ps2.executeQuery();) {
                         LinkedList<DocumentiLezione> dl = new LinkedList<>();
                         while (rs2.next()) {
                             dl.add(new DocumentiLezione(rs2.getInt("id_docud"), rs2.getString("tipo"), rs2.getString("path"), rs2.getString("codice_ud")));
