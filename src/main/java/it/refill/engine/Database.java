@@ -55,7 +55,6 @@ public class Database {
             p.put("useUnicode", "true");
             this.c = DriverManager.getConnection("jdbc:mysql://" + host, p);
         } catch (Exception ex) {
-            System.err.println(estraiEccezione(ex));
             if (this.c != null) {
                 try {
                     this.c.close();
@@ -764,12 +763,7 @@ public class Database {
                 }
             }
         } catch (Exception ex) {
-            System.err.println("METHOD: " + new Object() {
-            }
-                    .getClass()
-                    .getEnclosingMethod()
-                    .getName());
-            System.err.println("ERROR: " + ExceptionUtils.getStackTrace(ex));
+            insertTR("E", "System", estraiEccezione(ex));
         }
         return list;
     }

@@ -132,7 +132,7 @@ public class SendMailJet {
 
         response = client.post(request);
 
-        System.out.println(response.getStatus());
+//        System.out.println(response.getStatus());
 
         return response.getStatus() == 200;
 
