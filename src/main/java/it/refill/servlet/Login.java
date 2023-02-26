@@ -126,8 +126,11 @@ public class Login extends HttpServlet {
     protected void login_edubik(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = deleteWhitespace(getRequestValue(request, "username"));
         String password = deleteWhitespace(getRequestValue(request, "password"));
+        String passwordMD5 = DigestUtils.md5Hex(password);
+        GenericUser gu = Action.loginUser(username, passwordMD5);
+        boolean ssotester = Action.get_Path("id.pro.sso.tester").contains(gu.getIdpro());
         ResponseSSO sso = login(username, password);
-        if (!sso.getAccess_token().startsWith("ERROR")) {
+        if (ssotester && !sso.getAccess_token().startsWith("ERROR")) {
             HttpSession se = request.getSession();
             se.setAttribute("us_sso", username);
             //se.setAttribute("us_actk", ClientSSO.encrypt(sso.getAccess_token()));
@@ -138,23 +141,20 @@ public class Login extends HttpServlet {
             }
         } else {
             try ( PrintWriter pw = response.getWriter()) {
-                pw.print("ERROR:CREDENZIALI ERRATE.");
+                pw.print("ERROR: CREDENZIALI ERRATE O CORSO FORMATIVO NON ABILITATO.");
             }
         }
 
     }
 
     protected void login_mcnnuovo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         String nomestanza = deleteWhitespace(getRequestValue(request, "nomestanza"));
         String username = deleteWhitespace(getRequestValue(request, "username"));
         String password = deleteWhitespace(getRequestValue(request, "password"));
         String passwordMD5 = DigestUtils.md5Hex(password);
         GenericUser user = Action.loginUser(nomestanza, username, passwordMD5);
         if (user != null) {
-
-//            ResponseSSO sso = login(username, password);
-//            if (!sso.getAccess_token().startsWith("ERROR")) {
+            boolean ssotester = Action.get_Path("id.pro.sso.tester").contains(user.getIdpro());
             HttpSession se = request.getSession();
             se.setAttribute("us_cod", user.getIdallievi());
             se.setAttribute("us_pro", user.getIdpro());
@@ -163,43 +163,63 @@ public class Login extends HttpServlet {
             se.setAttribute("us_cf", user.getCodicefiscale().toUpperCase());
             se.setAttribute("us_stanza", nomestanza.toUpperCase());
             se.setAttribute("us_role", user.getTipo());
-
             //SSO
-//                if (SSOACTIVE) {
-//                    se.setAttribute("us_sso", username);
-//                    se.setAttribute("us_actk", ClientSSO.encrypt(sso.getAccess_token()));
-//                    se.setAttribute("us_retk", ClientSSO.encrypt(sso.getRefresh_token()));
-//                }
-            log_ajax("L1", nomestanza.toUpperCase(), user.getTipo() + ":" + user.getIdallievi(), getNanoSecond());
-            log_ajax("L10", nomestanza.toUpperCase(), "LOGIN " + user.getIdallievi() + " CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
-
-            redirect(request, response, "conference_mcn_2022.jsp");
-//            } else {
-//
-//                log_ajax("ER1", nomestanza.toUpperCase(), "LOGIN FALLITO SSO CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
-//                log_ajax("ER1", nomestanza.toUpperCase(), "LOGIN FALLITO SSO: " + sso.toString(), getNanoSecond());
-//
-//                redirect(request, response, "login_mcn.jsp?error=yes");
-//            }
+            if (ssotester) {
+                ResponseSSO sso = login(username, password);
+                if (!sso.getAccess_token().startsWith("ERROR")) {
+                    if (SSOACTIVE) {
+                        se.setAttribute("us_sso", username);
+//                        se.setAttribute("us_actk", ClientSSO.encrypt(sso.getAccess_token()));
+                        se.setAttribute("us_retk", ClientSSO.encrypt(sso.getRefresh_token()));
+                    }
+                    log_ajax("L1", nomestanza.toUpperCase(), user.getTipo() + ":" + user.getIdallievi(), getNanoSecond());
+                    log_ajax("L10", nomestanza.toUpperCase(), "LOGIN " + user.getIdallievi() + " CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
+                    redirect(request, response, "conference_mcn_2022.jsp");
+                } else {
+                    log_ajax("ER1", nomestanza.toUpperCase(), "LOGIN FALLITO SSO CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
+                    log_ajax("ER1", nomestanza.toUpperCase(), "LOGIN FALLITO SSO: " + sso.toString(), getNanoSecond());
+                    redirect(request, response, "login_mcn.jsp?error=yes");
+                }
+            } else {
+                log_ajax("L1", nomestanza.toUpperCase(), user.getTipo() + ":" + user.getIdallievi(), getNanoSecond());
+                log_ajax("L10", nomestanza.toUpperCase(), "LOGIN " + user.getIdallievi() + " CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
+                redirect(request, response, "conference_mcn_2022.jsp");
+            }
         } else {
-            //
-//            System.out.println("it.refill.servlet.Login.login_mcnnuovo()");
+//            System.out.println("it.refill.servlet.Login.login_mcnnuovo(errlog)");
 //            HttpSession se = request.getSession();
 //            se.setAttribute("us_cod", "MCN");
 //            se.setAttribute("us_nome", capitalize("MCN"));
 //            se.setAttribute("us_cognome", capitalize("MCN"));
 //            se.setAttribute("us_cf", "MCN");
-//            se.setAttribute("us_stanza", "FADMCNDD_316_A1");
+//            se.setAttribute("us_stanza", "FADMCN_700_A1");
 //            se.setAttribute("us_role", "ALLIEVO");
-//            se.setAttribute("us_pro", "316");
-//
+//            se.setAttribute("us_pro", "700");
+//            
+//            ResponseSSO sso = login(username, password);
+//                if (!sso.getAccess_token().startsWith("ERROR")) {
+//                    if (SSOACTIVE) {
+//                        se.setAttribute("us_sso", username);
+////                        se.setAttribute("us_actk", ClientSSO.encrypt(sso.getAccess_token()));
+//                        se.setAttribute("us_retk", ClientSSO.encrypt(sso.getRefresh_token()));
+//                    }
+////                    log_ajax("L1", nomestanza.toUpperCase(), user.getTipo() + ":" + user.getIdallievi(), getNanoSecond());
+////                    log_ajax("L10", nomestanza.toUpperCase(), "LOGIN " + user.getIdallievi() + " CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
+//                    redirect(request, response, "conference_mcn_2022.jsp");
+//                }
+//            HttpSession se = request.getSession();
+//            se.setAttribute("us_cod", "MCN");
+//            se.setAttribute("us_nome", capitalize("MCN"));
+//            se.setAttribute("us_cognome", capitalize("MCN"));
+//            se.setAttribute("us_cf", "MCN");
+//            se.setAttribute("us_stanza", "FADMCN_810_A1");
+//            se.setAttribute("us_role", "ALLIEVO");
+//            se.setAttribute("us_pro", "810");
 //            //SSO
 //            se.setAttribute("us_sso", username);
 //            se.setAttribute("us_actk","dadsdasaddas");
 //            se.setAttribute("us_retk", "dsaadsadsdsa");
-//
 //            redirect(request, response, "conference_mcn_2022.jsp");
-
             log_ajax("ER1", nomestanza.toUpperCase(), "LOGIN FALLITO CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
             redirect(request, response, "login_mcn.jsp?error=yes");
         }

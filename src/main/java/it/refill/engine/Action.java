@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -27,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -41,8 +41,11 @@ import org.joda.time.format.DateTimeFormatter;
  * @author rcosco
  */
 public class Action {
-
-    public static final Logger log = createLog("MC_API");
+    
+    public static final ResourceBundle conf = ResourceBundle.getBundle("conf.conf");
+    public static final boolean SSOACTIVE = Boolean.parseBoolean(conf.getString("sso"));
+    
+    public static final Logger log = createLog("MC_FAD_API");
 
     public static final String pathTEMP = "/mnt/mcn/test/temp/";
     public static final String pathLOG = "/mnt/mcn/test/log/";
@@ -59,8 +62,7 @@ public class Action {
 
     public static final boolean test = false;
 
-    public static final ResourceBundle conf = ResourceBundle.getBundle("conf.conf");
-    public static final boolean SSOACTIVE = Boolean.valueOf(conf.getString("sso"));
+    
 
     private static Logger createLog(String appname) {
         Logger logger = Logger.getLogger(appname);
@@ -79,7 +81,7 @@ public class Action {
             }
             FileHandler fh = new FileHandler(pathLog + File.separator + appname + "_" + ora + ".log", true);
             logger.addHandler(fh);
-        } catch (IOException | SecurityException ex) {
+        } catch (Exception ex) {
             logger.severe(ex.getMessage());
         }
         return logger;
@@ -110,7 +112,7 @@ public class Action {
             String paramName = parameterNames.nextElement();
             String[] paramValues = request.getParameterValues(paramName);
             for (String paramValue : paramValues) {
-                System.out.println("NORMAL FIELD - " + paramName + " : " + new String(paramValue.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+                log.log(Level.INFO, "NORMAL FIELD - {0} : {1}", new Object[]{paramName, new String(paramValue.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8)});
             }
         }
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
@@ -125,15 +127,15 @@ public class Action {
                     if (item.isFormField()) {
                         String fieldName = item.getFieldName();
                         String value = new String(item.getString().getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-                        System.out.println("MULTIPART FIELD - " + fieldName + " : " + value);
+                        log.log(Level.INFO, "MULTIPART FIELD - {0} : {1}", new Object[]{fieldName, value});
                     } else {
                         String fieldName = item.getFieldName();
                         String fieldValue = item.getName();
-                        System.out.println("MULTIPART FILE - " + fieldName + " : " + fieldValue);
+                        log.log(Level.INFO, "MULTIPART FILE - {0} : {1}", new Object[]{fieldName, fieldValue});
                     }
                 }
-            } catch (FileUploadException ex) {
-                ex.printStackTrace();
+            } catch (Exception ex) {
+                log.severe(estraiEccezione(ex));
             }
         }
     }

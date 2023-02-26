@@ -11,6 +11,8 @@ import com.mailjet.client.MailjetRequest;
 import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
+import static it.refill.engine.Action.estraiEccezione;
+import static it.refill.engine.Action.log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -116,8 +118,8 @@ public class SendMailJet {
                 try (InputStream i = new FileInputStream(file)) {
                     b64 = new String(Base64.encodeBase64(IOUtils.toByteArray(i)));
                 }
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            } catch (Exception ex) {
+                log.severe(estraiEccezione(ex));
             }
             mail.put(Emailv31.Message.ATTACHMENTS, new JSONArray()
                     .put(new JSONObject()

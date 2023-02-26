@@ -5,7 +5,6 @@
 package it.refill.sso;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import static org.apache.commons.lang3.builder.ToStringStyle.JSON_STYLE;
 
 /**

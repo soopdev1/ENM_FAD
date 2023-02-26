@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.joda.time.DateTime;
 
 /**
@@ -58,7 +57,7 @@ public class Database {
             if (this.c != null) {
                 try {
                     this.c.close();
-                } catch (SQLException ex1) {
+                } catch (Exception ex1) {
                 }
             }
             this.c = null;

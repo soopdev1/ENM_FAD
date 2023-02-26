@@ -39,7 +39,7 @@ public class DbSSO {
             p.put("useUnicode", "true");
             this.c = DriverManager.getConnection(host, p);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.severe(estraiEccezione(ex));
             if (this.c != null) {
                 try {
                     this.c.close();
@@ -56,8 +56,8 @@ public class DbSSO {
             if (this.c != null) {
                 this.c.close();
             }
-        } catch (Exception ex1) {
-            ex1.printStackTrace();
+        } catch (Exception ex) {
+            log.severe(estraiEccezione(ex));
         }
     }
 

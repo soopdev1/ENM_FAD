@@ -451,11 +451,24 @@
                             </div>
                             <%}%>
                             <%
-                                String edu = Action.get_Path("linkedu");
-                                if (edu != null && (us_role.equals("ALLIEVO") || us_role.equals("DOCENTE"))) {%>
+                                boolean ssotester = false;
+                                String rto = "";
+                                try {
+                                    //System.out.println("className.methodName(1) "+Action.get_Path("id.pro.sso.tester"));
+                                    //System.out.println("className.methodName(2) "+session.getAttribute("us_pro").toString());
+                                    ssotester = Action.get_Path("id.pro.sso.tester").contains(session.getAttribute("us_pro").toString());
+                                    rto = session.getAttribute("us_retk").toString();
+                                } catch (Exception e) {
+                                    ssotester = false;
+                                }
+                                String linkedu = Action.get_Path("linkedu1");
+                                if (ssotester && linkedu != null && (us_role.equals("ALLIEVO") || us_role.equals("DOCENTE"))) {%>
                             <div class="col-xl-12 col-lg-12">
                                 <hr>
-                                <a href="<%=edu%>" class="btn btn-primary btn-lg btn-block" target="_blank">Vai su EDUBIK.it</a>
+                                <form action="<%=linkedu%>" method="POST" id="formedu_r" target="_blank">
+                                    <input type="hidden" name="us_retk" id="RefreshToken_r" value="<%=rto%>"/>
+                                </form>
+                                <button class="btn btn-primary btn-lg btn-block" onclick="document.getElementById('formedu_r').submit()">VAI ALL'AREA LAVORO</button>
                             </div>
                             <%}%>
 
@@ -577,12 +590,12 @@
         <script src="js/select2.min.js"></script>
 
         <script>
-                                    $(document).ready(function () {
-                                        $('.js-example-basic-single').select2({
-                                            placeholder: "...",
-                                            theme: 'classic'
-                                        });
+                                $(document).ready(function () {
+                                    $('.js-example-basic-single').select2({
+                                        placeholder: "...",
+                                        theme: 'classic'
                                     });
+                                });
         </script>
 
 
