@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.refill.servlet;
+package rc.so.servlet;
 
-import it.refill.engine.Action;
+import rc.so.engine.Action;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

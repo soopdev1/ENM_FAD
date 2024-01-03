@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.refill.engine;
+package rc.so.engine;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +31,7 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -45,7 +46,7 @@ public class Action {
     public static final ResourceBundle conf = ResourceBundle.getBundle("conf.conf");
     public static final boolean SSOACTIVE = Boolean.parseBoolean(conf.getString("sso"));
     
-    public static final Logger log = createLog("MC_FAD_API");
+    public static final Logger log = createLog("MCTOSCANA_FAD_API");
 
     public static final String pathTEMP = "/mnt/mcn/test/temp/";
     public static final String pathLOG = "/mnt/mcn/test/log/";

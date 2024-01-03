@@ -1,11 +1,11 @@
 <%@page import="java.util.LinkedList"%>
-<%@page import="it.refill.engine.DocumentiLezione"%>
-<%@page import="it.refill.engine.DatiLezione"%>
+<%@page import="rc.so.engine.DocumentiLezione"%>
+<%@page import="rc.so.engine.DatiLezione"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="org.joda.time.DateTime"%>
 <%@page import="java.util.List"%>
-<%@page import="it.refill.engine.GenericUser"%>
-<%@page import="it.refill.engine.Action"%>
+<%@page import="rc.so.engine.GenericUser"%>
+<%@page import="rc.so.engine.Action"%>
 <!DOCTYPE html>
 <html lang="en">
     <%

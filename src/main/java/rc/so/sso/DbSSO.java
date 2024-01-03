@@ -2,11 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package it.refill.sso;
+package rc.so.sso;
 
-import static it.refill.engine.Action.conf;
-import static it.refill.engine.Action.estraiEccezione;
-import static it.refill.engine.Action.log;
+import static rc.so.engine.Action.conf;
+import static rc.so.engine.Action.estraiEccezione;
+import static rc.so.engine.Action.log;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;

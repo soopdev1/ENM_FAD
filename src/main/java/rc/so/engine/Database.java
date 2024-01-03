@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.refill.engine;
+package rc.so.engine;
 
 import com.google.gson.Gson;
-import static it.refill.engine.Action.conf;
-import static it.refill.engine.Action.estraiEccezione;
-import static it.refill.engine.Action.pat_5;
+import static rc.so.engine.Action.conf;
+import static rc.so.engine.Action.estraiEccezione;
+import static rc.so.engine.Action.pat_5;
 import static java.lang.Class.forName;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -265,7 +265,7 @@ public class Database {
         List<GenericUser> list = new ArrayList<>();
         try {
 
-            String sql = "SELECT * FROM allievi WHERE idprogetti_formativi = '" + idpr + "' AND id_statopartecipazione = '01' ";
+            String sql = "SELECT * FROM allievi WHERE idprogetti_formativi = '" + idpr + "' AND id_statopartecipazione = '15' ";
             if (mail) {
                 sql += " AND email REGEXP '^[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9._-]@[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9]\\\\.[a-zA-Z]{2,63}$'";
             }
@@ -573,6 +573,7 @@ public class Database {
                 ps1.setString(1, nomestanza);
                 ps1.setString(2, username);
                 ps1.setString(3, password);
+//                System.out.println("rc.so.engine.Database.loginUser() "+ps1.toString());
                 try ( ResultSet rs1 = ps1.executeQuery()) {
                     if (rs1.next()) {
                         String idtype = rs1.getString(1);
@@ -580,30 +581,41 @@ public class Database {
                         String idprogetti_formativi = rs1.getString(3);
 
                         String sql1;
-                        if (idtype.equals("S")) {
-                            sql1 = "SELECT idallievi, nome, cognome, codicefiscale, email, telefono FROM allievi WHERE idallievi = " + idsoggetto;
-                        } else if (idtype.equals("D")) {
-                            sql1 = "SELECT iddocenti, nome, cognome, codicefiscale, email FROM docenti WHERE iddocenti = " + idsoggetto;
-                        } else if (idtype.equals("O")) {
-                            sql1 = "SELECT id_staff, nome, cognome, telefono, email FROM staff_modelli "
-                                    + "WHERE id_staff = " + idsoggetto;
-                        } else {
-                            return null;
+                        switch (idtype) {
+                            case "S":
+                                sql1 = "SELECT idallievi, nome, cognome, codicefiscale, email, telefono FROM allievi WHERE idallievi = " + idsoggetto;
+                                break;
+                            case "D":
+                                sql1 = "SELECT iddocenti, nome, cognome, codicefiscale, email FROM docenti WHERE iddocenti = " + idsoggetto;
+                                break;
+                            case "O":
+                                sql1 = "SELECT id_staff, nome, cognome, telefono, email FROM staff_modelli "
+                                        + "WHERE id_staff = " + idsoggetto;
+                                break;
+                            default:
+                                return null;
                         }
+//                        System.out.println("rc.so.engine.Database.loginUser() "+sql1);
                         try ( PreparedStatement ps2 = this.c.prepareStatement(sql1, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);  ResultSet rs2 = ps2.executeQuery()) {
                             if (rs2.next()) {
-                                if (idtype.equals("S")) {
-                                    out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), rs2.getString(6));
-                                    out.setTipo(GenericUser.formatType(idtype));
-                                    out.setIdpro(idprogetti_formativi);
-                                } else if (idtype.equals("D")) {
-                                    out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), null);
-                                    out.setTipo(GenericUser.formatType(idtype));
-                                    out.setIdpro(idprogetti_formativi);
-                                } else if (idtype.equals("O")) {
-                                    out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), rs2.getString(4));
-                                    out.setTipo(GenericUser.formatType(idtype));
-                                    out.setIdpro(idprogetti_formativi);
+                                switch (idtype) {
+                                    case "S":
+                                        out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), rs2.getString(6));
+                                        out.setTipo(GenericUser.formatType(idtype));
+                                        out.setIdpro(idprogetti_formativi);
+                                        break;
+                                    case "D":
+                                        out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), null);
+                                        out.setTipo(GenericUser.formatType(idtype));
+                                        out.setIdpro(idprogetti_formativi);
+                                        break;
+                                    case "O":
+                                        out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), rs2.getString(4));
+                                        out.setTipo(GenericUser.formatType(idtype));
+                                        out.setIdpro(idprogetti_formativi);
+                                        break;
+                                    default:
+                                        break;
                                 }
                             }
                         }

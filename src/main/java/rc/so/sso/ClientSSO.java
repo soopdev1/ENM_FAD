@@ -2,12 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package it.refill.sso;
+package rc.so.sso;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.refill.engine.Action;
-import static it.refill.engine.Action.estraiEccezione;
-import static it.refill.engine.Action.log;
+import rc.so.engine.Action;
+import static rc.so.engine.Action.estraiEccezione;
+import static rc.so.engine.Action.log;
 import java.nio.charset.Charset;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPublicKey;

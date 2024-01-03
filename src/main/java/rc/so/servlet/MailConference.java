@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.refill.servlet;
+package rc.so.servlet;
 
-import it.refill.engine.Action;
-import static it.refill.engine.Action.getRequestValue;
+import rc.so.engine.Action;
+import static rc.so.engine.Action.getRequestValue;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;

@@ -4,11 +4,11 @@
  */
 package testingpack;
 
-import it.refill.engine.Action;
-import it.refill.engine.Database;
-import static it.refill.sso.ClientSSO.login;
-import static it.refill.sso.ClientSSO.logout;
-import it.refill.sso.ResponseSSO;
+import rc.so.engine.Action;
+import rc.so.engine.Database;
+import static rc.so.sso.ClientSSO.login;
+import static rc.so.sso.ClientSSO.logout;
+import rc.so.sso.ResponseSSO;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

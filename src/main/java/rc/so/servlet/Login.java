@@ -3,22 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.refill.servlet;
+package rc.so.servlet;
 
-import it.refill.engine.Action;
-import static it.refill.engine.Action.SSOACTIVE;
-import static it.refill.engine.Action.getNanoSecond;
-import static it.refill.engine.Action.getRequestValue;
-import static it.refill.engine.Action.getUserMC;
-import static it.refill.engine.Action.getUserSA;
-import static it.refill.engine.Action.log_ajax;
-import static it.refill.engine.Action.redirect;
-import static it.refill.engine.Action.verificaStanza_OGGI;
-import it.refill.engine.GenericUser;
-import it.refill.sso.ClientSSO;
-import static it.refill.sso.ClientSSO.login;
-import static it.refill.sso.ClientSSO.logout;
-import it.refill.sso.ResponseSSO;
+import rc.so.engine.Action;
+import static rc.so.engine.Action.SSOACTIVE;
+import static rc.so.engine.Action.getNanoSecond;
+import static rc.so.engine.Action.getRequestValue;
+import static rc.so.engine.Action.getUserMC;
+import static rc.so.engine.Action.getUserSA;
+import static rc.so.engine.Action.log_ajax;
+import static rc.so.engine.Action.redirect;
+import static rc.so.engine.Action.verificaStanza_OGGI;
+import rc.so.engine.GenericUser;
+import rc.so.sso.ClientSSO;
+import static rc.so.sso.ClientSSO.login;
+import static rc.so.sso.ClientSSO.logout;
+import rc.so.sso.ResponseSSO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -153,6 +153,7 @@ public class Login extends HttpServlet {
         String password = deleteWhitespace(getRequestValue(request, "password"));
         String passwordMD5 = DigestUtils.md5Hex(password);
         GenericUser user = Action.loginUser(nomestanza, username, passwordMD5);
+//        System.out.println("rc.so.servlet.Login.login_mcnnuovo() "+user);
         if (user != null) {
             boolean ssotester = Action.get_Path("id.pro.sso.tester").contains(user.getIdpro());
             HttpSession se = request.getSession();
@@ -186,7 +187,7 @@ public class Login extends HttpServlet {
                 redirect(request, response, "conference_mcn_2022.jsp");
             }
         } else {
-//            System.out.println("it.refill.servlet.Login.login_mcnnuovo(errlog)");
+//            System.out.println("rc.so.servlet.Login.login_mcnnuovo(errlog)");
 //            HttpSession se = request.getSession();
 //            se.setAttribute("us_cod", "MCN");
 //            se.setAttribute("us_nome", capitalize("MCN"));
