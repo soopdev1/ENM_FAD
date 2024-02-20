@@ -126,11 +126,11 @@ public class Login extends HttpServlet {
     protected void login_edubik(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = deleteWhitespace(getRequestValue(request, "username"));
         String password = deleteWhitespace(getRequestValue(request, "password"));
-        String passwordMD5 = DigestUtils.md5Hex(password);
-        GenericUser gu = Action.loginUser(username, passwordMD5);
-        boolean ssotester = Action.get_Path("id.pro.sso.tester").contains(gu.getIdpro());
+//        String passwordMD5 = DigestUtils.md5Hex(password);
+//        GenericUser gu = Action.loginUser(username, passwordMD5);
+        //boolean ssotester = Action.get_Path("id.pro.sso.tester").contains(gu.getIdpro());
         ResponseSSO sso = login(username, password);
-        if (ssotester && !sso.getAccess_token().startsWith("ERROR")) {
+        if (!sso.getAccess_token().startsWith("ERROR")) {
             HttpSession se = request.getSession();
             se.setAttribute("us_sso", username);
             //se.setAttribute("us_actk", ClientSSO.encrypt(sso.getAccess_token()));
