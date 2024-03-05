@@ -75,34 +75,6 @@
                                             <hr>
                                             <h2 class="h4 text-gray-900 mb-4">LEZIONE DEL: <%=date1%></h2>
                                         </div>
-                                        <hr>
-                                        <form class="login100-form validate-form" method="post" action="Login?type=login_mcnnuovo">
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-home"></i></span>
-                                                </div>
-                                                <input type="text" name="nomestanza" class="form-control required" placeholder="NOME STANZA" aria-label="NOMESTANZA" aria-describedby="basic-addon1" required/>
-                                            </div>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-user"></i></span>
-                                                </div>
-                                                <input type="text" name="username" class="form-control required" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" required/>
-                                            </div>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-key"></i></span>
-                                                </div>
-                                                <input type="password" name="password" class="form-control required" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1" required />
-                                            </div>
-                                            <small id="emailHelp" class="form-text text-muted">N.B. Inserire i dati di accesso ricevuti via mail in data odierna.</small>
-                                            <div class="input-group mb-3">
-                                                <button class="btn btn-primary btn-user btn-block">
-                                                    LOGIN
-                                                </button>
-                                            </div>
-                                        </form>
-                                        <%if (false) {%>
                                         <form action="" method="POST">
                                             <hr style="background-color: #c82333;">
                                             <small class="form-text text-muted">AREA LAVORO</small>
@@ -128,7 +100,6 @@
                                         <form action="<%=linkedu%>" method="POST" id="formedu_r">
                                             <input type="hidden" name="us_retk" id="RefreshToken_r" value="" />
                                         </form>
-                                        <%}%>
                                     </div>
                                 </div>
                             </div>

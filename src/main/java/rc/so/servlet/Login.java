@@ -254,7 +254,7 @@ public class Login extends HttpServlet {
                 default:
                     break;
             }
-        } catch (ServletException | IOException ex) {
+        } catch (Exception ex) {
         }
     }
 
