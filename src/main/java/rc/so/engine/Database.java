@@ -265,7 +265,7 @@ public class Database {
         List<GenericUser> list = new ArrayList<>();
         try {
 
-            String sql = "SELECT * FROM allievi WHERE idprogetti_formativi = '" + idpr + "' AND id_statopartecipazione = '15' ";
+            String sql = "SELECT * FROM allievi WHERE idprogetti_formativi = '" + idpr + "' AND id_statopartecipazione IN ('15','18') ";
             if (mail) {
                 sql += " AND email REGEXP '^[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9._-]@[a-zA-Z0-9][a-zA-Z0-9._-]*[a-zA-Z0-9]\\\\.[a-zA-Z]{2,63}$'";
             }

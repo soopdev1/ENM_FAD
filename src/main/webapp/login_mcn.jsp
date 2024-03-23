@@ -68,7 +68,7 @@
                                 <div class="col-lg-6">
                                     <div class="p-5">
                                         <div class="text-center">
-                                            <h1 class="h4 text-gray-900 mb-4">Portale FAD <br> YES I START UP TOSCANA</h1>
+                                            <h1 class="h4 text-gray-900 mb-4">Portale FAD <br> YES I START UP SICILIA</h1>
                                                 <%if (Action.test) {%>
                                             <span class="bold text-center text-primary center-block"><img src="images/beta.png" alt="" height="100"/></span>
                                                 <%}%>
