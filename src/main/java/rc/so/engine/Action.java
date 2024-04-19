@@ -46,7 +46,7 @@ public class Action {
     public static final ResourceBundle conf = ResourceBundle.getBundle("conf.conf");
     public static final boolean SSOACTIVE = Boolean.parseBoolean(conf.getString("sso"));
     
-    public static final Logger log = createLog("MCTOSCANA_FAD_API");
+    public static final Logger log = createLog("MC_FAD_API");
 
     public static final String pathTEMP = "/mnt/mcn/test/temp/";
     public static final String pathLOG = "/mnt/mcn/test/log/";
@@ -63,7 +63,7 @@ public class Action {
 
     public static final boolean test = false;
 
-    
+    public static final String descr = conf.getString("db.name").replaceAll("enm_gestione_", "").replaceAll("_prod", "").toUpperCase();
 
     private static Logger createLog(String appname) {
         Logger logger = Logger.getLogger(appname);
