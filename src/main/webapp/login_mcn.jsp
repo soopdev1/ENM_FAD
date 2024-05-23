@@ -102,7 +102,7 @@
                                                 </button>
                                             </div>
                                         </form>
-                                        <%if (false) {%>
+                                        <%if (true) {%>
                                         <form action="" method="POST">
                                             <hr style="background-color: #c82333;">
                                             <small class="form-text text-muted">AREA LAVORO</small>
