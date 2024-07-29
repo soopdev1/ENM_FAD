@@ -16,7 +16,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import static java.sql.ResultSet.CONCUR_UPDATABLE;
 import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ public class Database {
         String password = conf.getString("db.pass");
         String host = conf.getString("db.host") + ":3306/" + conf.getString("db.name");
         try {
-            forName(driver).newInstance();
+            forName(driver);
             Properties p = new Properties();
             p.put("user", user);
             p.put("password", password);
@@ -77,7 +76,7 @@ public class Database {
             if (this.c != null) {
                 this.c.close();
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             insertTR("E", "System", estraiEccezione(ex));
         }
     }
@@ -97,7 +96,7 @@ public class Database {
             ps.setString(2, user);
             ps.setString(3, getNow());
             ps.execute();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
         }
     }
 
@@ -123,7 +122,7 @@ public class Database {
                     out.add(rs.getString(1));
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             insertTR("E", "System", estraiEccezione(ex));
         }
         return out;
@@ -141,7 +140,7 @@ public class Database {
                     }
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             insertTR("E", "System", estraiEccezione(ex));
         }
         return out;
@@ -169,7 +168,7 @@ public class Database {
                     }
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             insertTR("E", "System", estraiEccezione(ex));
         }
         return out;
@@ -187,7 +186,7 @@ public class Database {
                     }
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             insertTR("E", "System", estraiEccezione(ex));
         }
         return out;
@@ -205,7 +204,7 @@ public class Database {
                     }
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             insertTR("E", "System", estraiEccezione(ex));
         }
         return out;
@@ -223,7 +222,7 @@ public class Database {
                     }
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             insertTR("E", "System", estraiEccezione(ex));
         }
         return out;
@@ -241,7 +240,7 @@ public class Database {
                     }
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             insertTR("E", "System", estraiEccezione(ex));
         }
         return out;
@@ -255,7 +254,7 @@ public class Database {
                     return rs.getString(1);
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             insertTR("E", "System", estraiEccezione(ex));
         }
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS").format(new Date());
@@ -277,7 +276,7 @@ public class Database {
                             rs.getString(6), rs.getString(8), rs.getString("telefono")));
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             insertTR("E", "System", estraiEccezione(ex));
         }
         return list;
@@ -296,7 +295,7 @@ public class Database {
                     list.add(new GenericUser(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString("email"), null));
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             insertTR("E", "System", estraiEccezione(ex));
         }
         return list;
@@ -311,7 +310,7 @@ public class Database {
                     out = rs.getString(1);
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             out = null;
             insertTR("E", "System", estraiEccezione(ex));
         }
@@ -334,7 +333,7 @@ public class Database {
                     out = rs.getString(1);
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             out = null;
             insertTR("E", "System", estraiEccezione(ex));
         }
@@ -357,7 +356,7 @@ public class Database {
                     out = "CAD_" + rs.getString(1);
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             out = null;
             insertTR("E", "System", estraiEccezione(ex));
         }
@@ -373,7 +372,7 @@ public class Database {
             try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 ok = rs.next();
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             insertTR("E", "System", estraiEccezione(ex));
         }
 
@@ -387,7 +386,7 @@ public class Database {
             try ( Statement st = this.c.createStatement();  ResultSet rs = st.executeQuery(sql)) {
                 ok = rs.next();
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             insertTR("E", "System", estraiEccezione(ex));
         }
 
@@ -403,7 +402,7 @@ public class Database {
                     out = rs.getString(1);
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             out = null;
             insertTR("E", "System", estraiEccezione(ex));
         }
@@ -420,7 +419,7 @@ public class Database {
                 pst.setString(4, date);
                 pst.execute();
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             insertTR("E", "System", estraiEccezione(ex));
         }
     }
@@ -434,7 +433,7 @@ public class Database {
                     out = rs.getString(1);
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             out = null;
             insertTR("E", "System", estraiEccezione(ex));
         }
@@ -451,7 +450,7 @@ public class Database {
                     out[1] = rs.getString(2);
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             out = null;
             insertTR("E", "System", estraiEccezione(ex));
         }
@@ -467,7 +466,7 @@ public class Database {
                     out = Arrays.asList(new Gson().fromJson(rs.getString(1), String[].class));
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             out = new ArrayList<>();
             insertTR("E", "System", estraiEccezione(ex));
         }
@@ -483,7 +482,7 @@ public class Database {
                     out = rs.getString(1);
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             out = null;
             insertTR("E", "System", estraiEccezione(ex));
         }
@@ -507,7 +506,7 @@ public class Database {
                             rs.getString("inizio"));
                 }
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             out = null;
             insertTR("E", "System", estraiEccezione(ex));
         }
@@ -528,30 +527,34 @@ public class Database {
                         String idprogetti_formativi = rs1.getString(3);
 
                         String sql1;
-                        if (idtype.equals("S")) {
-                            sql1 = "SELECT idallievi, nome, cognome, codicefiscale, email, telefono FROM allievi WHERE idallievi = " + idsoggetto;
-                        } else if (idtype.equals("D")) {
-                            sql1 = "SELECT iddocenti, nome, cognome, codicefiscale, email FROM docenti WHERE iddocenti = " + idsoggetto;
-                        } else if (idtype.equals("O")) {
-                            sql1 = "SELECT id_staff, nome, cognome, telefono, email FROM staff_modelli "
-                                    + "WHERE id_staff = " + idsoggetto;
-                        } else {
-                            return null;
+                        switch (idtype) {
+                            case "S" -> sql1 = "SELECT idallievi, nome, cognome, codicefiscale, email, telefono FROM allievi WHERE idallievi = " + idsoggetto;
+                            case "D" -> sql1 = "SELECT iddocenti, nome, cognome, codicefiscale, email FROM docenti WHERE iddocenti = " + idsoggetto;
+                            case "O" -> sql1 = "SELECT id_staff, nome, cognome, telefono, email FROM staff_modelli WHERE id_staff = " + idsoggetto;
+                            default -> {
+                                return null;
+                            }
                         }
                         try ( PreparedStatement ps2 = this.c.prepareStatement(sql1, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);  ResultSet rs2 = ps2.executeQuery()) {
                             if (rs2.next()) {
-                                if (idtype.equals("S")) {
-                                    out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), rs2.getString(6));
-                                    out.setTipo(GenericUser.formatType(idtype));
-                                    out.setIdpro(idprogetti_formativi);
-                                } else if (idtype.equals("D")) {
-                                    out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), null);
-                                    out.setTipo(GenericUser.formatType(idtype));
-                                    out.setIdpro(idprogetti_formativi);
-                                } else if (idtype.equals("O")) {
-                                    out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), rs2.getString(4));
-                                    out.setTipo(GenericUser.formatType(idtype));
-                                    out.setIdpro(idprogetti_formativi);
+                                switch (idtype) {
+                                    case "S" -> {
+                                        out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), rs2.getString(6));
+                                        out.setTipo(GenericUser.formatType(idtype));
+                                        out.setIdpro(idprogetti_formativi);
+                                    }
+                                    case "D" -> {
+                                        out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), null);
+                                        out.setTipo(GenericUser.formatType(idtype));
+                                        out.setIdpro(idprogetti_formativi);
+                                    }
+                                    case "O" -> {
+                                        out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), rs2.getString(4));
+                                        out.setTipo(GenericUser.formatType(idtype));
+                                        out.setIdpro(idprogetti_formativi);
+                                    }
+                                    default -> {
+                                    }
                                 }
                             }
                         }
@@ -582,40 +585,35 @@ public class Database {
 
                         String sql1;
                         switch (idtype) {
-                            case "S":
-                                sql1 = "SELECT idallievi, nome, cognome, codicefiscale, email, telefono FROM allievi WHERE idallievi = " + idsoggetto;
-                                break;
-                            case "D":
-                                sql1 = "SELECT iddocenti, nome, cognome, codicefiscale, email FROM docenti WHERE iddocenti = " + idsoggetto;
-                                break;
-                            case "O":
-                                sql1 = "SELECT id_staff, nome, cognome, telefono, email FROM staff_modelli "
+                            case "S" -> sql1 = "SELECT idallievi, nome, cognome, codicefiscale, email, telefono FROM allievi WHERE idallievi = " + idsoggetto;
+                            case "D" -> sql1 = "SELECT iddocenti, nome, cognome, codicefiscale, email FROM docenti WHERE iddocenti = " + idsoggetto;
+                            case "O" -> sql1 = "SELECT id_staff, nome, cognome, telefono, email FROM staff_modelli "
                                         + "WHERE id_staff = " + idsoggetto;
-                                break;
-                            default:
+                            default -> {
                                 return null;
+                            }
                         }
 //                        System.out.println("rc.so.engine.Database.loginUser() "+sql1);
                         try ( PreparedStatement ps2 = this.c.prepareStatement(sql1, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);  ResultSet rs2 = ps2.executeQuery()) {
                             if (rs2.next()) {
                                 switch (idtype) {
-                                    case "S":
+                                    case "S" -> {
                                         out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), rs2.getString(6));
                                         out.setTipo(GenericUser.formatType(idtype));
                                         out.setIdpro(idprogetti_formativi);
-                                        break;
-                                    case "D":
+                                    }
+                                    case "D" -> {
                                         out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), null);
                                         out.setTipo(GenericUser.formatType(idtype));
                                         out.setIdpro(idprogetti_formativi);
-                                        break;
-                                    case "O":
+                                    }
+                                    case "O" -> {
                                         out = new GenericUser(rs2.getString(1), rs2.getString(2), rs2.getString(3), rs2.getString(4), rs2.getString(5), rs2.getString(4));
                                         out.setTipo(GenericUser.formatType(idtype));
                                         out.setIdpro(idprogetti_formativi);
-                                        break;
-                                    default:
-                                        break;
+                                    }
+                                    default -> {
+                                    }
                                 }
                             }
                         }
@@ -643,12 +641,12 @@ public class Database {
                 try ( ResultSet rs1 = ps1.executeQuery()) {
                     if (rs1.next()) {
                         String sql1;
-                        if (idtype.equals("S")) {
-                            sql1 = "SELECT idallievi, nome, cognome, codicefiscale, email, telefono FROM allievi WHERE idallievi = " + iduser;
-                        } else if (idtype.equals("D")) {
-                            sql1 = "SELECT iddocenti, nome, cognome, codicefiscale, email FROM docenti WHERE iddocenti = " + iduser;
-                        } else {
-                            return null;
+                        switch (idtype) {
+                            case "S" -> sql1 = "SELECT idallievi, nome, cognome, codicefiscale, email, telefono FROM allievi WHERE idallievi = " + iduser;
+                            case "D" -> sql1 = "SELECT iddocenti, nome, cognome, codicefiscale, email FROM docenti WHERE iddocenti = " + iduser;
+                            default -> {
+                                return null;
+                            }
                         }
                         try ( PreparedStatement ps2 = this.c.prepareStatement(sql1, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);  ResultSet rs2 = ps2.executeQuery()) {
                             if (rs2.next()) {
@@ -696,12 +694,12 @@ public class Database {
         String out = null;
         try {
             String sql;
-            if (idtype.equals("S")) {
-                sql = "SELECT cognome,nome FROM allievi WHERE idprogetti_formativi = " + idpro + " AND idallievi = " + iduser;
-            } else if (idtype.equals("D")) {
-                sql = "SELECT cognome,nome FROM docenti WHERE iddocenti = " + iduser;
-            } else {
-                return out;
+            switch (idtype) {
+                case "S" -> sql = "SELECT cognome,nome FROM allievi WHERE idprogetti_formativi = " + idpro + " AND idallievi = " + iduser;
+                case "D" -> sql = "SELECT cognome,nome FROM docenti WHERE iddocenti = " + iduser;
+                default -> {
+                    return out;
+                }
             }
 
             try ( PreparedStatement ps1 = this.c.prepareStatement(sql, TYPE_SCROLL_INSENSITIVE, CONCUR_UPDATABLE);  ResultSet rs1 = ps1.executeQuery();) {

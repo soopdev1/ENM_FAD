@@ -46,8 +46,8 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body">
-                            I DATI DI ACCESSO INSERITI NON SONO CORRETTI. CONTROLLARE LA MAIL RICEVUTA.
+                        <div class="modal-body" id="texterror">
+                            GENERIC ERROR.
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -102,7 +102,7 @@
                                                 </button>
                                             </div>
                                         </form>
-                                        <%if (true) {%>
+                                        <%if (Action.SSOACTIVE) {%>
                                         <form action="" method="POST">
                                             <hr style="background-color: #c82333;">
                                             <small class="form-text text-muted">AREA LAVORO</small>
@@ -153,6 +153,7 @@
     <script src="js/sb-admin-2.min.js"></script>
     <script type="text/javascript">
                                                     function sendedubik() {
+                                                        document.getElementById("texterror").html = "I DATI DI ACCESSO INSERITI NON SONO CORRETTI. CONTROLLARE LA MAIL RICEVUTA.";
                                                         var username = $("#username").val();
                                                         var password = $("#password").val();
                                                         $.ajax({
@@ -164,6 +165,7 @@
                                                             success: function (data, status, xhr) {   // success callback function
                                                                 if (data === null || data.startsWith("ERROR")) {
                                                                     document.getElementById("RefreshToken_r").value = "";
+                                                                    document.getElementById("texterror").innerHTML = data;
                                                                     document.getElementById('modalerrorbutton').click();
                                                                 } else {
                                                                     document.getElementById("RefreshToken_r").value = data;

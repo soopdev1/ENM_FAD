@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
@@ -42,10 +43,10 @@ import org.joda.time.format.DateTimeFormatter;
  * @author rcosco
  */
 public class Action {
-    
+
     public static final ResourceBundle conf = ResourceBundle.getBundle("conf.conf");
     public static final boolean SSOACTIVE = Boolean.parseBoolean(conf.getString("sso"));
-    
+
     public static final Logger log = createLog("MC_FAD_API");
 
     public static final String pathTEMP = "/mnt/mcn/test/temp/";
@@ -102,7 +103,8 @@ public class Action {
                 DateTime dt = formatter.parseDateTime(dat);
                 return dt.toString(pattern2, Locale.ITALY);
             }
-        } catch (IllegalArgumentException ex) {
+        } catch (Exception ex) {
+            log.severe(estraiEccezione(ex));
         }
         return "No correct date";
     }
@@ -196,7 +198,8 @@ public class Action {
                     || us_cognome.endsWith("")
                     || us_cf.endsWith("")
                     || us_stanza.endsWith(""));
-        } catch (Exception e) {
+        } catch (Exception ex) {
+            log.severe(estraiEccezione(ex));
             return false;
         }
 
@@ -262,7 +265,8 @@ public class Action {
             Database db = new Database(log);
             db.insertTR(type, user, descr);
             db.closeDB();
-        } catch (Exception e) {
+        } catch (Exception ex) {
+            log.severe(estraiEccezione(ex));
         }
     }
 
@@ -271,7 +275,8 @@ public class Action {
             Database db = new Database(log);
             db.insertTR(type, user, descr);
             db.closeDB();
-        } catch (Exception e) {
+        } catch (Exception ex) {
+            log.severe(estraiEccezione(ex));
         }
     }
 
@@ -281,7 +286,8 @@ public class Action {
             Database db = new Database(log);
             out = db.get_UserProg(pr, false);
             db.closeDB();
-        } catch (Exception e) {
+        } catch (Exception ex) {
+            log.severe(estraiEccezione(ex));
         }
         return out;
     }
@@ -293,6 +299,7 @@ public class Action {
             out = db.get_UserProg(pr, true);
             db.closeDB();
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
         }
 
         return out;
@@ -305,6 +312,8 @@ public class Action {
             out = db.get_DocProg(pr, false);
             db.closeDB();
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
         }
         return out;
     }
@@ -316,6 +325,8 @@ public class Action {
             out = db.get_DocProg(pr, true);
             db.closeDB();
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
         }
         return out;
     }
@@ -326,7 +337,9 @@ public class Action {
             Database db = new Database(log);
             out = db.cf_list("allievi");
             db.closeDB();
-        } catch (Exception ex) {
+        } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
         }
         return out;
     }
@@ -337,8 +350,8 @@ public class Action {
             Database db = new Database(log);
             out = db.cf_list("docenti");
             db.closeDB();
-            db.closeDB();
-        } catch (Exception ex) {
+        } catch (Exception e) {
+            log.severe(estraiEccezione(e));
         }
         return out;
     }
@@ -349,8 +362,11 @@ public class Action {
             Database db = new Database(log);
             out = db.getMailFromConference(stanza);
             db.closeDB();
-        } catch (Exception ex) {
+        } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
         }
+
         return out;
 
     }
@@ -361,7 +377,9 @@ public class Action {
             String out = db.getPswFromConference(stanza);
             db.closeDB();
             return out;
-        } catch (Exception ex) {
+        } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
             return "";
         }
     }
@@ -372,7 +390,9 @@ public class Action {
             GenericUser out = db.getAllievo(cf);
             db.closeDB();
             return out;
-        } catch (Exception ex) {
+        } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
             return null;
         }
     }
@@ -383,7 +403,9 @@ public class Action {
             GenericUser out = db.getUserMC(username);
             db.closeDB();
             return out;
-        } catch (Exception ex) {
+        } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
             return null;
         }
     }
@@ -394,7 +416,9 @@ public class Action {
             GenericUser out = db.getUser(id);
             db.closeDB();
             return out;
-        } catch (Exception ex) {
+        } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
             return null;
         }
     }
@@ -406,6 +430,8 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
             return null;
         }
     }
@@ -417,6 +443,8 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
             return null;
         }
     }
@@ -428,6 +456,8 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
             return null;
         }
 
@@ -440,6 +470,8 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
             return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS").format(new Date());
         }
     }
@@ -451,6 +483,8 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
             return "";
         }
     }
@@ -462,6 +496,8 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
             return false;
         }
     }
@@ -473,6 +509,8 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
+
             return false;
         }
     }
@@ -484,6 +522,7 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
             return "";
         }
     }
@@ -495,6 +534,7 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
             return "";
         }
     }
@@ -506,6 +546,7 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
             return "";
         }
     }
@@ -528,6 +569,7 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
             return null;
         }
     }
@@ -539,6 +581,7 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
             String[] out1 = {"", ""};
             return out1;
         }
@@ -550,6 +593,7 @@ public class Action {
             db.log_ajax(type, room, action, date);
             db.closeDB();
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
         }
 
     }
@@ -571,6 +615,7 @@ public class Action {
         try {
             return Integer.parseInt(ing);
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
         }
         return 0;
     }
@@ -582,6 +627,7 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
             return null;
         }
     }
@@ -593,6 +639,7 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
             return null;
         }
     }
@@ -604,6 +651,7 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
             return null;
         }
     }
@@ -615,6 +663,7 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            log.severe(estraiEccezione(e));
             return null;
         }
     }
@@ -626,6 +675,7 @@ public class Action {
             db.closeDB();
             return out;
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -672,6 +722,19 @@ public class Action {
         } catch (Exception e) {
         }
         return ec1.getMessage();
+
+    }
+
+    public static boolean progetto_abilitato_EDUBIK(String idpro) {
+        try {
+            String ssotester = Action.get_Path("id.pro.sso.tester");
+            if (ssotester.contains(";")) {
+                return Arrays.asList(ssotester.split(";")).contains(idpro);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
 
     }
 

@@ -28,7 +28,7 @@ public class DbSSO {
         String password = conf.getString("db.pass.identity");
         String host = conf.getString("db.host") + ":3306/enm_identity";
         try {
-            Class.forName(driver).newInstance();
+            Class.forName(driver);
             Properties p = new Properties();
             p.put("user", user);
             p.put("password", password);

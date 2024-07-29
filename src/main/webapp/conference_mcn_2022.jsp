@@ -456,12 +456,13 @@
                                 try {
                                     //System.out.println("className.methodName(1) "+Action.get_Path("id.pro.sso.tester"));
                                     //System.out.println("className.methodName(2) "+session.getAttribute("us_pro").toString());
-                                    ssotester = Action.get_Path("id.pro.sso.tester").contains(session.getAttribute("us_pro").toString());
+                                    ssotester = Action.progetto_abilitato_EDUBIK(session.getAttribute("us_pro").toString());
                                     rto = session.getAttribute("us_retk").toString();
                                 } catch (Exception e) {
                                     ssotester = false;
                                 }
                                 String linkedu = Action.get_Path("linkedu1");
+                                
                                 if (ssotester && linkedu != null && (us_role.equals("ALLIEVO") || us_role.equals("DOCENTE"))) {%>
                             <div class="col-xl-12 col-lg-12">
                                 <hr>

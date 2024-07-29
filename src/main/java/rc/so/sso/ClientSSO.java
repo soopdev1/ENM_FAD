@@ -33,7 +33,7 @@ public class ClientSSO {
 
     public static ResponseSSO logout(String username) {
         ResponseSSO output;
-        String link = ENDPOINT + "/connect/disconnect";
+        String link = ENDPOINT + "connect/disconnect";
         try {
             TrustManager[] trustAllCerts = new TrustManager[]{
                 new X509TrustManager() {
@@ -84,7 +84,7 @@ public class ClientSSO {
 
     public static ResponseSSO login(String username, String password) {
         ResponseSSO output;
-        String link = ENDPOINT + "/connect/token";
+        String link = ENDPOINT + "connect/token";
         try {
             TrustManager[] trustAllCerts = new TrustManager[]{
                 new X509TrustManager() {
@@ -153,7 +153,6 @@ public class ClientSSO {
             return Base64.encodeBase64String(
                     cipher.doFinal(plaintext.getBytes("UTF8"))
             );
-//            return new String(cipher.doFinal(plaintext.getBytes("UTF8")), "UTF8");
         } catch (Exception ex) {
             log.severe(estraiEccezione(ex));
             return null;

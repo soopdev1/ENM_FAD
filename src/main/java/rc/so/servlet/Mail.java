@@ -61,7 +61,7 @@ public class Mail extends HttpServlet {
             String st = getRequestValue(request, "st");
 
             List<GenericUser> usr = Action.get_UserProg(pr);
-            if (usr.size() > 0) {
+            if (!usr.isEmpty()) {
                 if (iduser.equals("---")) {
                     usr.forEach(user -> {
                         if (EmailValidator.getInstance().isValid(user.getEmail())) {

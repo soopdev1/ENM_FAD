@@ -31,7 +31,8 @@ public class SendMailJet {
     public static String convertToUTF8(String s) {
         try {
             return new String(s.getBytes("UTF-8"), "ISO-8859-1");
-        } catch (java.io.UnsupportedEncodingException e) {
+        } catch (Exception e) {
+            log.severe(estraiEccezione(e));
             return null;
         }
     }
@@ -58,7 +59,6 @@ public class SendMailJet {
         String filename = "";
         String content_type = "";
         String b64 = "";
-        
 
         ClientOptions options = ClientOptions.builder()
                 .apiKey(mailjet_api)
@@ -132,12 +132,15 @@ public class SendMailJet {
                         .put(mail));
 
         response = client.post(request);
-
-//        System.out.println(response.getStatus());
-
+        try {
+            log.warning(dest.toString());
+            log.warning(String.valueOf(response.getStatus()));
+            log.warning(response.getRawResponseContent());
+        } catch (Exception e) {
+        }
+        
         return response.getStatus() == 200;
 
     }
-
 
 }
