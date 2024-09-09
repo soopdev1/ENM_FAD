@@ -37,7 +37,7 @@ public class DbSSO {
             p.put("useSSL", "false");
             p.put("connectTimeout", "1000");
             p.put("useUnicode", "true");
-            this.c = DriverManager.getConnection(host, p);
+            this.c = DriverManager.getConnection("jdbc:mysql://" + host, p);
         } catch (Exception ex) {
             log.severe(estraiEccezione(ex));
             if (this.c != null) {

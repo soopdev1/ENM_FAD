@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +33,6 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -82,6 +82,8 @@ public class Action {
                 dirLog.mkdirs();
             }
             FileHandler fh = new FileHandler(pathLog + File.separator + appname + "_" + ora + ".log", true);
+            fh.setFormatter(new SimpleFormatter());
+            fh.setLevel(Level.ALL);
             logger.addHandler(fh);
         } catch (Exception ex) {
             logger.severe(ex.getMessage());

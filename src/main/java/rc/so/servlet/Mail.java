@@ -110,6 +110,7 @@ public class Mail extends HttpServlet {
                     + "AND idsoggetto = " + idsoggetto + " "
                     + "AND data ='" + dataoggi + "' "
                     + "AND room = '" + nomestanza + "'";
+            
             DbSSO dbs = new DbSSO();
             Database db1 = new Database(log);
             String linkweb = db1.get_Path("linkfad");
@@ -133,6 +134,7 @@ public class Mail extends HttpServlet {
                         if (st5.executeUpdate(upd) > 0) {
                             
                             log.log(Level.INFO, "SSO ALLIEVO ) {0} : {1}", new Object[]{nomecognome, dbs.executequery(upd)});
+                            
                             String sql1 = "SELECT ud.fase,lm.giorno,lm.orario_start,lm.orario_end,lm.id_docente "
                                     + "FROM lezioni_modelli lm, modelli_progetti mp, lezione_calendario lc, unita_didattiche ud, fad_multi f"
                                     + " WHERE mp.id_modello=lm.id_modelli_progetto AND lc.id_lezionecalendario=lm.id_lezionecalendario AND ud.codice=lc.codice_ud"
