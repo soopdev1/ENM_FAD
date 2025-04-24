@@ -37,9 +37,13 @@
         <link rel="shortcut icon" href="favicon.ico" />
     </head>
 
-
-
     <script>
+
+        var us_cod = '<%=us_cod%>';
+        var us_role = '<%=us_role%>';
+        var us_stanza = '<%=us_stanza%>';
+        var name = "<%=us_nome%>" + " " + "<%=us_cognome%>";
+        var domain = "<%=Action.getDomainFAD()%>";
 
         function log_ajax(type, room, action) {
             $.ajax({
@@ -50,20 +54,16 @@
         }
 
         function login() {
-            log_ajax('L1', '<%=us_stanza%>', '<%=us_role%>' + ';' + '<%=us_cod%>');
+            log_ajax('L1', us_stanza, us_role + ';' + us_cod);
             document.getElementById('startbutton').click();
         }
 
         function start(roomname) {
-
-            var name = "<%=us_nome%>" + " " + "<%=us_cognome%>";
-            var domain = "<%=Action.getDomainFAD()%>";
             $('#content-jitsi').html("");
             var but1 = ['microphone', 'camera', 'fullscreen', 'hangup', 'chat', 'desktop'];
             if ('<%=us_role%>' !== 'ALLIEVO') {
                 but1 = ['microphone', 'camera', 'fullscreen', 'hangup', 'chat', 'desktop', 'settings'];
             }
-
             var options = {
                 roomName: roomname,
                 noSSL: false,
@@ -101,50 +101,50 @@
             //api.executeCommand('displayName', name);
             api.addEventListener('avatarChanged', function (OUT) {
                 if (OUT.id === 'local') {
-                    log_ajax('IN', '<%=us_stanza%>', "AVATAR MODIFICATO/INGRESSO -> " + '<%=us_cod%>');
+                    log_ajax('IN', '', "AVATAR MODIFICATO/INGRESSO -> " + us_cod);
                 } else {
-                    log_ajax('IN', '<%=us_stanza%>', "AVATAR MODIFICATO/INGRESSO -> " + OUT.id);
+                    log_ajax('IN', us_stanza, "AVATAR MODIFICATO/INGRESSO -> " + OUT.id);
                 }
             });
 
             api.addEventListener('videoConferenceJoined', function (OUT) {
-                log_ajax('IN', '<%=us_stanza%>', "UTENTE LOGGATO CON ID " + OUT.id + " -- " + name);
-                log_ajax('IN', '<%=us_stanza%>', "PARTECIPANTI -> " + api.getNumberOfParticipants());
+                log_ajax('IN', us_stanza, "UTENTE LOGGATO CON ID " + OUT.id + " -- " + name);
+                log_ajax('IN', us_stanza, "PARTECIPANTI -> " + api.getNumberOfParticipants());
             });
 
             api.addEventListener('videoConferenceLeft', function (OUT) {
-                log_ajax('L3', '<%=us_stanza%>', '<%=us_role%>' + ';' + '<%=us_cod%>');
+                log_ajax('L3', us_stanza, '<%=us_role%>' + ';' + us_cod);
             });
 
             api.addEventListener('dominantSpeakerChanged', function (OUT) {
-                log_ajax('IN', '<%=us_stanza%>', ("ORATORE MODIFICATO -> " + OUT.id));
+                log_ajax('IN', us_stanza, ("ORATORE MODIFICATO -> " + OUT.id));
             });
 
             api.addEventListener('outgoingMessage', function (OUT) {
-                log_ajax('IN', '<%=us_stanza%>', "MESSAGGIO -> " + '<%=us_cod%> ' + OUT.message);
+                log_ajax('IN', us_stanza, "MESSAGGIO -> " + us_cod + ' ' + OUT.message);
             });
 
             api.addEventListener('incomingMessage', function (OUT) {
-                log_ajax('IN', '<%=us_stanza%>', "MESSAGGIO -> " + OUT.from + " -- " + OUT.nick + " -- " + OUT.message);
+                log_ajax('IN', us_stanza, "MESSAGGIO -> " + OUT.from + " -- " + OUT.nick + " -- " + OUT.message);
             });
 
             api.addEventListener('displayNameChange', function (OUT) {
-                log_ajax('IN', '<%=us_stanza%>', "NOME CAMBIATO -> " + '<%=us_cod%> ' + OUT.id);
+                log_ajax('IN', us_stanza, "NOME CAMBIATO -> " + us_cod + ' ' + OUT.id);
             });
             api.addEventListener('participantJoined', function (OUT) {
-                log_ajax('IN', '<%=us_stanza%>', "NUOVO PARTECIPANTE -> " + OUT.id + " -- " + OUT.displayName);
+                log_ajax('IN', us_stanza, "NUOVO PARTECIPANTE -> " + OUT.id + " -- " + OUT.displayName);
             });
             api.addEventListener('participantLeft', function (OUT) {
-                log_ajax('L4', '<%=us_stanza%>', "USCITA PARTECIPANTE -> " + OUT.id);
+                log_ajax('L4', us_stanza, "USCITA PARTECIPANTE -> " + OUT.id);
             });
             api.addEventListener('readyToClose', function (OUT) {
-                log_ajax('L5', '<%=us_stanza%>', "USCITI TUTTI");
+                log_ajax('L5', us_stanza, "USCITI TUTTI");
                 api.dispose();
             });
         }
 
         function logout() {
-            log_ajax('L2', '<%=us_stanza%>', '<%=us_role%>' + ';' + '<%=us_cod%>');
+            log_ajax('L2', us_stanza, us_role + ';' + us_cod);
             $.ajax({
                 type: "POST",
                 url: "Login?type=logout_mcn"
@@ -153,7 +153,7 @@
         }
 
         function loadingpage() {
-            log_ajax('L1', '<%=us_stanza%>', '<%=us_role%>' + ';' + '<%=us_cod%>');
+            log_ajax('L1', us_stanza, us_role + ';' + us_cod);
             document.getElementById('startbutton').click();
             document.getElementById('sidebarToggle').click();
         }
@@ -246,6 +246,32 @@
                             <h2 class="h4 mb-0 text-gray-800">CF/Username: <small><%=us_cf%></small></h2>
                         </div>
                         <div class="row">
+                            <div class="modal fade"  tabindex="-1" aria-hidden="true">
+                                <button id="modalerrorbutton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                    Launch demo modal
+                                </button>
+                            </div>
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title text-danger" id="exampleModalLabel">ERRORE</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body" id="texterror">
+                                            GENERIC ERROR.
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
                             <button id="mailok" type="button" class="btn btn-primary modal fade" data-toggle="modal" data-target="#mailokModal">
                                 Launch demo modal
                             </button>
@@ -454,25 +480,24 @@
                                 boolean ssotester = false;
                                 String rto = "";
                                 try {
-                                    //System.out.println("className.methodName(1) "+Action.get_Path("id.pro.sso.tester"));
-                                    //System.out.println("className.methodName(2) "+session.getAttribute("us_pro").toString());
                                     ssotester = Action.progetto_abilitato_EDUBIK(session.getAttribute("us_pro").toString());
                                     rto = session.getAttribute("us_retk").toString();
                                 } catch (Exception e) {
                                     ssotester = false;
                                 }
                                 String linkedu = Action.get_Path("linkedu1");
-                                
-                                if (ssotester && linkedu != null && (us_role.equals("ALLIEVO") || us_role.equals("DOCENTE"))) {%>
+
+                                if (ssotester && (us_role.equals("ALLIEVO") || us_role.equals("DOCENTE"))) {%>
                             <div class="col-xl-12 col-lg-12">
                                 <hr>
-                                <form action="<%=linkedu%>" method="POST" id="formedu_r" target="_blank">
-                                    <input type="hidden" name="us_retk" id="RefreshToken_r" value="<%=rto%>"/>
+                                <form action="" method="POST" target="_blank">
+                                    <button class="btn btn-primary btn-lg btn-block"  onclick="return sendedubik_25();" type="button">VAI ALL'AREA LAVORO</button>
                                 </form>
-                                <button class="btn btn-primary btn-lg btn-block" onclick="document.getElementById('formedu_r').submit()">VAI ALL'AREA LAVORO</button>
+                                <form action="<%=linkedu%>" method="POST" id="formedu_r" target="_blank">
+                                    <input type="hidden" name="us_retk" id="RefreshToken_r" value="" />
+                                </form>
                             </div>
                             <%}%>
-
                             <%
                                 List<DatiLezione> datilezione = Action.datilezione(date2, us_pro);
                                 if (datilezione.size() > 0) {
@@ -488,9 +513,7 @@
                             <div class="col-xl-12 col-lg-12">
                                 <h3 class="m-0 font-weight-bold text-primary">DETTAGLI LEZIONE</h3>
                             </div>
-
                             <div class="col-xl-3 col-lg-3">
-
                                 <b>DATA:</b> <%=date1%> 
                                 <br>
                                 <b>GIORNO DI LEZIONE:</b> <%=dl1.getGIORNODILEZIONE()%>
@@ -498,7 +521,6 @@
                                 <b>NUMERO LEZIONE:</b> <%=dl1.getNUMEROLEZIONE()%>
                                 <br>
                                 <b>MODULO:</b> <%=dl1.getUNITADIDATTICA()%>
-
                             </div>
                             <%if (dl1.getFiles().size() > 0) {%>
                             <div class="col-xl-3 col-lg-3">
@@ -518,7 +540,6 @@
                                     </form>
                                     <%}
                                         }%>
-
                                 </div>    
                             </div>
                             <%} else {%>
@@ -526,32 +547,7 @@
                                 NON CI SONO DOCUMENTI RELATIVI A QUESTA LEZIONE
                             </div>
                             <%}%>
-                            <div class="col-xl-12 col-lg-12">
-                                <hr>
-                            </div>
-
-                            <%
-
-                                if (us_role.contains("ALLIEVO")) {
-
-                                    String q1 = Action.get_Path("questionario1");
-
-                            %>
-                            <div class="col-xl-6 col-lg-6">
-                                <h3 class="m-0 font-weight-bold text-primary">QUESTIONARIO</h3>
-                            </div>
-                            <%if (q1 != null && (lezionenum > 0 && lezionenum < 6)) {%>
-                            <div class="col-xl-6 col-lg-6">
-                                <h4 class="m-0 font-weight-bold text-primary"><a href="<%=q1 + "?ut=" + us_cod%>" target="_blank">Clicca qui per rispondere al questionario</a></h4>
-                            </div>
-                            <%} else {
-                                //QUESTIONARIO 2
-                                //String q2 = Action.get_Path("questionario2");
-                            %>
-
                             <%}
-                                        }
-                                    }
                                 }%>
                         </div>
                     </div>
@@ -559,7 +555,7 @@
                 <footer class="sticky-footer bg-white">
                     <div class="container my-auto">
                         <div class="copyright text-center my-auto">
-                            <span>YISU &copy; 2021</span>
+                            <span>YISU &copy; 2025</span>
                         </div>
                     </div>
                 </footer>
@@ -591,12 +587,42 @@
         <script src="js/select2.min.js"></script>
 
         <script>
-                                $(document).ready(function () {
-                                    $('.js-example-basic-single').select2({
-                                        placeholder: "...",
-                                        theme: 'classic'
-                                    });
-                                });
+
+                                        function sendedubik_25() {
+                                            document.getElementById("texterror").html = "I DATI DI ACCESSO INSERITI NON SONO CORRETTI. CONTROLLARE LA MAIL RICEVUTA.";
+                                            $.ajax({
+                                                url: "Login",
+                                                async: false,
+                                                type: "POST",
+                                                crossDomain: true,
+                                                data: {"type": "login_edubik_25"},
+                                                success: function (data, status, xhr) {   // success callback function
+                                                    if (data === null || data.startsWith("ERROR")) {
+                                                        document.getElementById("RefreshToken_r").value = "";
+                                                        document.getElementById("texterror").innerHTML = data;
+                                                        document.getElementById('modalerrorbutton').click();
+                                                    } else {
+                                                        document.getElementById("RefreshToken_r").value = data;
+                                                        document.getElementById('formedu_r').submit();
+                                                    }
+                                                },
+                                                error: function (jqXhr, textStatus, errorMessage) { // error callback 
+                                                    console.error("Error: " + jqXhr);
+                                                    console.error("Error: " + textStatus);
+                                                    console.error("Error: " + errorMessage);
+                                                }
+                                            });
+                                        }
+
+
+
+
+                                        $(document).ready(function () {
+                                            $('.js-example-basic-single').select2({
+                                                placeholder: "...",
+                                                theme: 'classic'
+                                            });
+                                        });
         </script>
 
 

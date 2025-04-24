@@ -76,7 +76,7 @@ public class Login extends HttpServlet {
 
         if (ok) {
             switch (view) {
-                case "2" ->  {
+                case "2" -> {
                     //SA
                     GenericUser user = getUserSA(username);
                     if (user != null) {
@@ -94,7 +94,7 @@ public class Login extends HttpServlet {
                         redirect(request, response, "logerr.jsp");
                     }
                 }
-                case "1" ->  {
+                case "1" -> {
                     //MC
                     GenericUser user = getUserMC(username);
                     if (user != null) {
@@ -112,7 +112,8 @@ public class Login extends HttpServlet {
                         redirect(request, response, "logerr.jsp");
                     }
                 }
-                default -> redirect(request, response, "logerr.jsp");
+                default ->
+                    redirect(request, response, "logerr.jsp");
             }
         } else {
             redirect(request, response, "logerr.jsp");
@@ -120,6 +121,42 @@ public class Login extends HttpServlet {
 
     }
 
+    protected void switch_edubik(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String rto = "";
+
+    }
+
+    protected void login_edubik_25(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
+        String username = request.getSession().getAttribute("us_sso").toString();
+        String password = ClientSSO.decrypt_S(request.getSession().getAttribute("us_en1").toString());
+        String passwordMD5 = DigestUtils.md5Hex(password);
+        GenericUser gu = Action.loginUser(username, passwordMD5);
+
+        if (gu == null) {
+            try (PrintWriter pw = response.getWriter()) {
+                pw.print("ERROR: CREDENZIALI ERRATE O PROGETTO FORMATIVO NON ABILITATO.");
+            }
+        } else {
+            boolean ssotester = progetto_abilitato_EDUBIK(gu.getIdpro());
+            ResponseSSO sso = login(username, password);
+            if (ssotester && !sso.getAccess_token().startsWith("ERROR")) {
+                HttpSession se = request.getSession();
+                se.setAttribute("us_sso", username);
+                //se.setAttribute("us_actk", ClientSSO.encrypt(sso.getAccess_token()));
+                String refreshtoken = ClientSSO.encrypt(sso.getRefresh_token());
+                se.setAttribute("us_retk", refreshtoken);
+                try (PrintWriter pw = response.getWriter()) {
+                    pw.print(refreshtoken);
+                }
+            } else {
+                try (PrintWriter pw = response.getWriter()) {
+                    pw.print("ERROR: CREDENZIALI ERRATE O CORSO FORMATIVO NON ABILITATO.");
+                }
+            }
+        }
+    }
+    
     protected void login_edubik(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = deleteWhitespace(getRequestValue(request, "username"));
         String password = deleteWhitespace(getRequestValue(request, "password"));
@@ -173,6 +210,7 @@ public class Login extends HttpServlet {
                 if (!sso.getAccess_token().startsWith("ERROR")) {
                     if (SSOACTIVE) {
                         se.setAttribute("us_sso", username);
+                        se.setAttribute("us_en1", ClientSSO.encrypt_S(password));
 //                        se.setAttribute("us_actk", ClientSSO.encrypt(sso.getAccess_token()));
                         se.setAttribute("us_retk", ClientSSO.encrypt(sso.getRefresh_token()));
                     }
@@ -204,26 +242,29 @@ public class Login extends HttpServlet {
 //                if (!sso.getAccess_token().startsWith("ERROR")) {
 //                    if (SSOACTIVE) {
 //                        se.setAttribute("us_sso", username);
-////                        se.setAttribute("us_actk", ClientSSO.encrypt(sso.getAccess_token()));
+            ////                        se.setAttribute("us_actk", ClientSSO.encrypt(sso.getAccess_token()));
 //                        se.setAttribute("us_retk", ClientSSO.encrypt(sso.getRefresh_token()));
 //                    }
 ////                    log_ajax("L1", nomestanza.toUpperCase(), user.getTipo() + ":" + user.getIdallievi(), getNanoSecond());
 ////                    log_ajax("L10", nomestanza.toUpperCase(), "LOGIN " + user.getIdallievi() + " CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
 //                    redirect(request, response, "conference_mcn_2022.jsp");
 //                }
-////            HttpSession se = request.getSession();
-////            se.setAttribute("us_cod", "MCN");
-////            se.setAttribute("us_nome", capitalize("MCN"));
-////            se.setAttribute("us_cognome", capitalize("MCN"));
-////            se.setAttribute("us_cf", "MCN");
-////            se.setAttribute("us_stanza", "FADMCN_97_A1");
-////            se.setAttribute("us_role", "ALLIEVO");
-////            se.setAttribute("us_pro", "97");
-////            //SSO
-////            se.setAttribute("us_sso", username);
-////            se.setAttribute("us_actk","dadsdasaddas");
-////            se.setAttribute("us_retk", "dsaadsadsdsa");
-////            redirect(request, response, "conference_mcn_2022.jsp");
+
+//            HttpSession se = request.getSession();
+//            se.setAttribute("us_cod", "MCN");
+//            se.setAttribute("us_nome", capitalize("MCN"));
+//            se.setAttribute("us_cognome", capitalize("MCN"));
+//            se.setAttribute("us_cf", "MCN");
+//            se.setAttribute("us_stanza", "FADMCN_97_A1");
+//            se.setAttribute("us_role", "ALLIEVO");
+//            se.setAttribute("us_pro", "97");
+//            ////            //SSO
+//////            se.setAttribute("us_sso", username);
+//            ////            se.setAttribute("us_actk","dadsdasaddas");
+//                        se.setAttribute("us_retk", "dsaadsadsdsa");
+//            se.setAttribute("us_sso", username);
+//            se.setAttribute("us_en1", ClientSSO.encrypt_S(password));
+//            redirect(request, response, "conference_mcn_2022.jsp");
 
             log_ajax("ER1", nomestanza.toUpperCase(), "LOGIN FALLITO CON CREDENZIALI -> " + username + " - " + password, getNanoSecond());
             redirect(request, response, "login_mcn.jsp?error=yes");
@@ -249,6 +290,10 @@ public class Login extends HttpServlet {
                     login_fad_mcn(request, response);
                 case "login_edubik" ->
                     login_edubik(request, response);
+                case "login_edubik_25" ->
+                    login_edubik_25(request, response);
+                case "switch_edubik" ->
+                    switch_edubik(request, response);
                 case "logout_mcn" ->
                     logout_mcn(request, response);
                 default -> {

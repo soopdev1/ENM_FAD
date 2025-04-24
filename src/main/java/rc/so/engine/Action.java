@@ -91,7 +91,7 @@ public class Action {
         return logger;
     }
 
-    public static String getDomainFAD() {
+    public static String getDomainFAD() {        
         return get_Path("linkfad_FL");
     }
 
